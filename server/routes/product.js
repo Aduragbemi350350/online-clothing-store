@@ -17,29 +17,28 @@ router.get('/', async (req, res) => {
         res.json(products)
     } catch (error) {
         console.log(error)
-        res.json(error)
+        return res.json(error)
     }
 })
 
 router.post('/', async (req, res) => {
 
-    const product = {
-        name: req.body.name,
-        description: req.body.description,
-        price: req.body.price,
-        slug: slugify(req.body.name, { lower: true }),
-        category: req.body.category,
-        createdBy: req.body.createdBy
-    }
+    const body = req.body
+    let products = []
+
+    body.map((product)=>{
+        let updatedProduct = { slug: slugify(product.name, {lower : true}), ...product}
+        products.push(updatedProduct)
+    })
 
     try {
-        const newProduct = await Product.create(product)
+        const newProduct = await Product.create(products)
 
         console.log(newProduct)
         res.json(newProduct)
     } catch (error) {
         console.log(error)
-        res.json(error)
+        return res.json(error)
     }
 })
 
@@ -53,7 +52,7 @@ router.get('/:slug', async (req, res) => {
         res.json(product)
     } catch (error) {
         console.log(error)
-        res.json(error)
+        return res.json(error)
     }
 })
 
@@ -76,7 +75,7 @@ router.put('/:slug', async (req, res) => {
         const updatedProduct = await Product.findByIdAndUpdate(productId, updateProduct, { new: true })
 
         console.log(updatedProduct)
-        res.json(updatedProduct)
+        return res.json(updatedProduct)
 
     } catch (error) {
         console.log(error)
@@ -98,7 +97,7 @@ router.delete('/:slug', async (req, res) => {
         const productReviews = await Review.deleteMany({product: productId})
 
         console.log(deletedProduct)
-        res.json(deletedProduct)
+        return res.json(deletedProduct)
     } catch (error) {
         console.log(error)
         res.json(error)

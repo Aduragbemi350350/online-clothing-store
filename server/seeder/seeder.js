@@ -1,74 +1,50 @@
-// 1 USERS
-export const users = [
-  {
-    username: "adminUser",
-    email: "admin@example.com",
-    role: "admin"
-  },
-  {
-    username: "john_doe",
-    email: "john@example.com",
-    role: "user"
-  },
-  {
-    username: "mary_jane",
-    email: "mary@example.com",
-    role: "user"
-  }
-];
+import express from 'express'
+const router = express.Router()
 
-// 2 PRODUCTS
-export const products = [
-  {
-    name: "Blue Ankara Gown",
-    description: "Elegant blue Ankara gown for all occasions.",
-    category: "ankara",
-    price: 15000,
-    // will assign createdBy after seeding users
-  },
-  {
-    name: "Classic White Shirt",
-    description: "Premium cotton shirt suitable for formal wear.",
-    category: "shirt",
-    price: 8000
-  }
-];
+//local import
+import Product from '../models/Product.js'
+import Review from '../models/Review.js'
+import slugify from 'slugify'
 
-// 3 REVIEWS
-export const reviews = [
-  {
-    comment: "Absolutely love this gown!",
-    reaction: "like",
-    rating: 5
-    // will assign user and product after seeding users & products
-  },
-  {
-    comment: "Nice material but a bit expensive.",
-    reaction: "dislike",
-    rating: 3
-  }
-];
+//product seeder
+router.post('/products', async (req, res) => {
+  try {
+    //delete all the content in the Product
+    await Product.deleteMany()
 
-// 4 ORDERS
-export const orders = [
-  {
-    // will assign user after seeding
-    products: [
-      { quantity: 2, price: 15000 },
-      { quantity: 1, price: 8000 }
-    ],
-    checkoutCost: 38000
-  }
-];
+    //products
+    const body = req.body
+    let products = []
 
-// 5 CARTS
-export const carts = [
-  {
-    // will assign user after seeding
-    products: [
-      { quantity: 1, price: 8000 }
-    ]
-  }
-];
+    body.map((product) => {
+      let updatedProduct = { slug: slugify(product.name, { lower: true }), ...product }
+      products.push(updatedProduct)
+    })
 
-export {users, products, reviews, carts, orders}
+    const newProducts = await Product.create(products)
+    console.log(newProducts)
+    res.json(newProducts)
+  } catch (error) {
+    console.log(error)
+    res.json(error)
+  }
+})
+
+
+//review seeder
+router.post('/reviews', async (req, res) => {
+  try {
+    //delete all the content in the Review
+    await Review.deleteMany()
+
+    const reviews = await Product.find()
+    console.log(reviews)
+    res.json(reviews)
+  } catch (error) {
+    console.log(error)
+    res.json(error)
+  }
+})
+
+
+export default router

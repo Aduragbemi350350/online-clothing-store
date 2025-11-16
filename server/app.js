@@ -11,6 +11,8 @@ const app = express();
 app.use(cors());
 app.use(express.json())
 dotenv.config()
+app.use(express.static('public'))
+
 mongoose.connect(process.env.MONGODB)
 .then(()=>{
     console.log("MongoDB connected successfully")
@@ -40,7 +42,9 @@ app.use("/api/cart", cart)
 //order
 import order from './routes/order.js'
 app.use("/api/order", order)
-
+//seeder
+import seeder from './seeder/seeder.js'
+app.use("/api/seeder", seeder)
 
 
 const port = process.env.PORT || 5000

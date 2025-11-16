@@ -1,6 +1,54 @@
 import Layout from "../Layout";
+import { useEffect } from "react";
+import { useDispatch, useSelector, UseSelector } from "react-redux";
+import { useParams } from "react-router";
+import { RootState } from "../../../redux/store/store";
+
+//local import
+import {
+  fetchProductController,
+  productRatingController,
+} from "../../../redux/controllers/product";
+import Comments from "../components/Comments";
 
 const Product = () => {
+  const dispatch = useDispatch();
+  const { slug } = useParams();
+
+  //Product state
+  const { product, loading, error } = useSelector(
+    (state: RootState) => state.product,
+  );
+  //Product Review State
+  // const productReviews = product?.reviews.flatMap((review) => review.comments)
+  // const productComments : string[] = []
+
+  // productReviews?.forEach((Comment)=>{
+  //   productComments.push(Comment)
+  // })
+
+
+
+
+
+
+  // console.log(productReviews)
+
+
+  // const rateProductHandler = ()=>{
+  //   productRatingController(dispatch, {
+  //     product: "69095eb9c7852594b8f17ec2",
+  //     user: "69094b43977779bf9ae8f600",
+  //     rating: 10
+  //   })
+  // }
+
+
+  useEffect(() => {
+    fetchProductController(dispatch, slug!);
+  }, [dispatch]);
+  if (loading) return <p className="mt-24">Loading...</p>;
+  if (error) return <p className="mt-24">Error: {error}</p>;
   return (
     <>
       <Layout>
@@ -10,23 +58,23 @@ const Product = () => {
               <img
                 alt="ecommerce"
                 className="h-64 w-full rounded object-cover object-center lg:h-auto lg:w-1/2"
-                src="https://dummyimage.com/400x400"
+                src={product?.image}
               />
               <div className="mt-6 w-full lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10">
                 <h2 className="title-font text-sm tracking-widest text-gray-500">
                   BRAND NAME
                 </h2>
                 <h1 className="title-font mb-1 text-3xl font-medium text-gray-900">
-                  The Catcher in the Rye
+                  {product?.name}
                 </h1>
                 <div className="mb-4 flex">
                   <span className="flex items-center">
                     <svg
                       fill="currentColor"
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       className="h-4 w-4 text-indigo-500"
                       viewBox="0 0 24 24"
                     >
@@ -35,9 +83,9 @@ const Product = () => {
                     <svg
                       fill="currentColor"
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       className="h-4 w-4 text-indigo-500"
                       viewBox="0 0 24 24"
                     >
@@ -46,9 +94,9 @@ const Product = () => {
                     <svg
                       fill="currentColor"
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       className="h-4 w-4 text-indigo-500"
                       viewBox="0 0 24 24"
                     >
@@ -57,9 +105,9 @@ const Product = () => {
                     <svg
                       fill="currentColor"
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       className="h-4 w-4 text-indigo-500"
                       viewBox="0 0 24 24"
                     >
@@ -68,9 +116,9 @@ const Product = () => {
                     <svg
                       fill="none"
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       className="h-4 w-4 text-indigo-500"
                       viewBox="0 0 24 24"
                     >
@@ -82,9 +130,9 @@ const Product = () => {
                     <a className="text-gray-500">
                       <svg
                         fill="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         className="h-5 w-5"
                         viewBox="0 0 24 24"
                       >
@@ -94,9 +142,9 @@ const Product = () => {
                     <a className="text-gray-500">
                       <svg
                         fill="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         className="h-5 w-5"
                         viewBox="0 0 24 24"
                       >
@@ -106,9 +154,9 @@ const Product = () => {
                     <a className="text-gray-500">
                       <svg
                         fill="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         className="h-5 w-5"
                         viewBox="0 0 24 24"
                       >
@@ -117,14 +165,7 @@ const Product = () => {
                     </a>
                   </span>
                 </div>
-                <p className="leading-relaxed">
-                  Fam locavore kickstarter distillery. Mixtape chillwave tumeric
-                  sriracha taximy chia microdosing tilde DIY. XOXO fam indxgo
-                  juiceramps cornhole raw denim forage brooklyn. Everyday carry
-                  +1 seitan poutine tumeric. Gastropub blue bottle austin
-                  listicle pour-over, neutra jean shorts keytar banjo tattooed
-                  umami cardigan.
-                </p>
+                <p className="leading-relaxed">{product?.description}</p>
                 <div className="mt-6 mb-5 flex items-center border-b-2 border-gray-100 pb-5">
                   <div className="flex">
                     <span className="mr-3">Color</span>
@@ -145,9 +186,9 @@ const Product = () => {
                         <svg
                           fill="none"
                           stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
                           className="h-4 w-4"
                           viewBox="0 0 24 24"
                         >
@@ -159,17 +200,21 @@ const Product = () => {
                 </div>
                 <div className="flex">
                   <span className="title-font text-2xl font-medium text-gray-900">
-                    $58.00
+                    {product?.price}
                   </span>
-                  <button className="ml-auto flex rounded border-0 bg-indigo-500 px-6 py-2 text-white hover:bg-indigo-600 focus:outline-none">
-                    Button
-                  </button>
-                  <button className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-gray-200 p-0 text-gray-500">
+                  <button className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-gray-200 p-0 text-gray-500"
+                  onClick={()=>{
+                    productRatingController(dispatch, {
+                      product: `${product?._id}`,
+                      user: `${product?.createdBy}`,
+                      rating: 4,
+                    }, `${product?.slug}`)
+                  }}>
                     <svg
                       fill="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       className="h-5 w-5"
                       viewBox="0 0 24 24"
                     >
@@ -180,6 +225,7 @@ const Product = () => {
               </div>
             </div>
           </div>
+          <Comments />
         </section>
       </Layout>
     </>

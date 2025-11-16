@@ -9,7 +9,7 @@ const reviewSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
     },
-    comment: {type: String},
+    comments: ["type: String"],
     reaction: {type: String , enum: ["like", "dislike"]},
     rating: {type: Number, min:0, max:5},
 }, {timestamps: true})
