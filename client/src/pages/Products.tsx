@@ -17,6 +17,7 @@ const Products = () => {
   if (loading) return <p className="mt-24">Loading...</p>;
   if (error) return <p className="mt-24">Error: {error}</p>;
 
+
   return (
     <>
       <div className="bg-white">
