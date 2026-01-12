@@ -27,13 +27,7 @@ const Product = () => {
   //   productComments.push(Comment)
   // })
 
-
-
-
-
-
   // console.log(productReviews)
-
 
   // const rateProductHandler = ()=>{
   //   productRatingController(dispatch, {
@@ -43,11 +37,43 @@ const Product = () => {
   //   })
   // }
 
-
   useEffect(() => {
     fetchProductController(dispatch, slug!);
   }, [dispatch]);
-  if (loading) return <p className="mt-24">Loading...</p>;
+  if (loading) return;
+  <div
+    role="status"
+    className="animate-pulse space-y-8 md:flex md:items-center md:space-y-0 md:space-x-8 rtl:space-x-reverse"
+  >
+    <div className="bg-neutral-quaternary rounded-base flex h-48 w-full items-center justify-center sm:w-96">
+      <svg
+        className="text-fg-disabled h-11 w-11"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
+        />
+      </svg>
+    </div>
+    <div className="w-full">
+      <div className="bg-neutral-quaternary mb-4 h-2.5 w-48 rounded-full"></div>
+      <div className="bg-neutral-quaternary mb-2.5 h-2 max-w-[480px] rounded-full"></div>
+      <div className="bg-neutral-quaternary mb-2.5 h-2 rounded-full"></div>
+      <div className="bg-neutral-quaternary mb-2.5 h-2 max-w-[440px] rounded-full"></div>
+      <div className="bg-neutral-quaternary mb-2.5 h-2 max-w-[460px] rounded-full"></div>
+      <div className="bg-neutral-quaternary h-2 max-w-[360px] rounded-full"></div>
+    </div>
+    <span className="sr-only">Loading...</span>
+  </div>;
   if (error) return <p className="mt-24">Error: {error}</p>;
   return (
     <>
@@ -202,14 +228,20 @@ const Product = () => {
                   <span className="title-font text-2xl font-medium text-gray-900">
                     {product?.price}
                   </span>
-                  <button className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-gray-200 p-0 text-gray-500"
-                  onClick={()=>{
-                    productRatingController(dispatch, {
-                      product: `${product?._id}`,
-                      user: `${product?.createdBy}`,
-                      rating: 4,
-                    }, `${product?.slug}`)
-                  }}>
+                  <button
+                    className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-gray-200 p-0 text-gray-500"
+                    onClick={() => {
+                      productRatingController(
+                        dispatch,
+                        {
+                          product: `${product?._id}`,
+                          user: `${product?.createdBy}`,
+                          rating: 4,
+                        },
+                        `${product?.slug}`,
+                      );
+                    }}
+                  >
                     <svg
                       fill="currentColor"
                       strokeLinecap="round"
