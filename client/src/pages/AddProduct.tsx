@@ -10,7 +10,7 @@ interface ProductDetails {
   category: string;
 }
 
-export default function AddProduct() {
+export default function AddProduct(){
   const [files, setFiles] = useState<File[]>([])
 
   const [productDetails, setProductDetails] = useState<ProductDetails>();

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
-import { RootState } from "../../../redux/store/store";
+import { RootState } from "../../redux/store/store";
 import axios from "axios";
-import { loginUser, logoutuser } from "../../../redux/store/slices/user";
+import { loginUser, logoutuser } from "../../redux/store/slices/user";
 
 const Navbar = () => {
   const { user } = useSelector((state: RootState) => state.user);

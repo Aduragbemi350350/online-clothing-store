@@ -4,8 +4,8 @@ import CommentArticle from "./CommentArticle";
 import { Comment, Product } from "../interface";
 
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../redux/store/store";
-import { fetchCommentsThunk } from "../../../redux/store/thunks/comment";
+import { AppDispatch, RootState } from "../../redux/store/store";
+import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 
 const Comments = ({ product }: { product: Product }) => {
   const dispatch = useDispatch<AppDispatch>();

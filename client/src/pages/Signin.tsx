@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { User } from "../interface";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../../redux/store/slices/user";
+import { loginUser } from "../../redux/store/slices/user";
 import Layout from "../Layout";
 
 export default function Signin() {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Comment, Product } from "../interface";
 import axios from "axios";
-import { fetchCommentsThunk } from "../../../redux/store/thunks/comment";
+import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../redux/store/store";
+import { AppDispatch } from "../../redux/store/store";
 
 const CommentArticle = ({
   comment,

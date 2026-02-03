@@ -1,8 +1,8 @@
 import React, { ReactNode, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import { Link } from "react-router";
-import fetchProductsThunk from "../../../redux/store/thunks/products";
+import fetchProductsThunk from "../../redux/store/thunks/products";
 
 //import router, route, path
 

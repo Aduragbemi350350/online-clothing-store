@@ -2,13 +2,13 @@ import Layout from "../Layout";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector, UseSelector } from "react-redux";
 import { useParams } from "react-router";
-import { AppDispatch, RootState } from "../../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 
 //local import
 import Comments from "../components/Comments";
 import axios from "axios";
-import fetchProductThunk from "../../../redux/store/thunks/product";
-import { fetchCommentsThunk } from "../../../redux/store/thunks/comment";
+import fetchProductThunk from "../../redux/store/thunks/product";
+import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 
 
 
