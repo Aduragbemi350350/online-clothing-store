@@ -4,7 +4,8 @@ import mongoose from 'mongoose'
 const userSchema = mongoose.Schema({
     username: {type: String, required: true},
     email: {type: String, required: true},
-    role: {type: String, enum: ["user", "admin"]}
+    role: {type: String, enum: ["user", "admin"]},
+    password: {type: String, require: true}
 })
 
 const User = mongoose.model("User", userSchema)
