@@ -3,49 +3,43 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv'
 import slugify from 'slugify';
-import mongodb from 'mongodb'
-import mongoose from 'mongoose'
+import {dbConnector} from './mongoDB/dbConnector.js';
+import cookieParser from 'cookie-parser'
 
 //MIDDLEWARE SETUP
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(express.json())
 dotenv.config()
 app.use(express.static('public'))
-
-mongoose.connect(process.env.MONGODB)
-.then(()=>{
-    console.log("MongoDB connected successfully")
-})
-.catch((err)=>{
-    console.log("MongoDB not connected: ", err)
-})
-
+dbConnector()
+app.use(express.urlencoded({extended: true}))
+app.use(cookieParser())
 
 //ROUTES
-//root
+//import routes
+import users from './routes/user.js'
+import products from './routes/product.js'
+import reviews from './routes/review.js'
+import cart from './routes/cart.js'
+import order from './routes/order.js'
+import seeder from './seeder/seeder.js'
+import commentRouter from './routes/comment.js';
+
+//configure routes
 app.get('/', (req, res)=>{
     res.json('welcome to homepage')
 })
-//users
-import users from './routes/user.js'
 app.use("/api/users", users)
-//products
-import products from './routes/product.js'
 app.use("/api/products", products)
-//reviews
-import reviews from './routes/review.js'
 app.use("/api/reviews", reviews)
-//cart
-import cart from './routes/cart.js'
 app.use("/api/cart", cart)
-//order
-import order from './routes/order.js'
 app.use("/api/order", order)
-//seeder
-import seeder from './seeder/seeder.js'
 app.use("/api/seeder", seeder)
-
+app.use('/api/comments', commentRouter)
 
 const port = process.env.PORT || 5000
 app.listen(port, ()=>{
