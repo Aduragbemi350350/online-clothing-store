@@ -6,36 +6,57 @@ const router = express.Router()
 import Product from '../models/Product.js'
 import Review from '../models/Review.js'
 import slugify from 'slugify'
+import { getProducts } from '../controllers/products.js'
+import { multerUpload } from '../multer/multer.js'
+import fileRenamer from '../utilities/fileRenamer.js'
+import { authMiddleWare, getUser } from '../auth/authMiddleware.js'
 
-router.get('/', async (req, res) => {
 
+
+router.get('/',getUser, getProducts)
+
+router.post('/', authMiddleWare ,multerUpload.array("images"), async (req, res) => {
     try {
-        //get all products
-        const products = await Product.find()
+        const user = req.user
+        const files = req.files
+        const { name, price, description, category } = req.body
 
-        console.log(products)
-        res.json(products)
-    } catch (error) {
-        console.log(error)
-        return res.json(error)
-    }
-})
+        if (!files || !description || !name || !price || !category || !user) {
+            console.log({ "Create product": "Product images or product details aren't available" })
+            res.status(400).json({ "Create product": "Product images or product details aren't available" })
+            return
+        }
 
-router.post('/', async (req, res) => {
+        //get image name
+        const imageName = files.map((file) => {
+            const name = fileRenamer(file.originalname)
+            return name
+        })
 
-    const body = req.body
-    let products = []
+        console.log(imageName)
 
-    body.map((product)=>{
-        let updatedProduct = { slug: slugify(product.name, {lower : true}), ...product}
-        products.push(updatedProduct)
-    })
+        //create a product
+        const product = {
+            name,
+            price,
+            description,
+            category,
+            image: imageName[0],
+            slug: slugify(name),
+            createdBy: user._id
+        }
 
-    try {
-        const newProduct = await Product.create(products)
+        //create product in DB
+        const createdProduct = await Product.create(product)
 
-        console.log(newProduct)
-        res.json(newProduct)
+        if (!createdProduct) {
+            console.log({ "Create product": "Product wasn't created in the DB" })
+            res.status(400).json({ "Create product": "Product wasn't created in the DB" })
+            return
+        }
+        
+        console.log({ "This product is created": createdProduct })
+        res.json({ "This product is created": createdProduct })
     } catch (error) {
         console.log(error)
         return res.json(error)
@@ -94,7 +115,7 @@ router.delete('/:slug', async (req, res) => {
 
         const deletedProduct = await Product.findByIdAndDelete(productId)
         // delete product review
-        const productReviews = await Review.deleteMany({product: productId})
+        const productReviews = await Review.deleteMany({ product: productId })
 
         console.log(deletedProduct)
         return res.json(deletedProduct)
