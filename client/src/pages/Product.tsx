@@ -1,80 +1,121 @@
 import Layout from "../Layout";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector, UseSelector } from "react-redux";
 import { useParams } from "react-router";
-import { RootState } from "../../../redux/store/store";
+import { AppDispatch, RootState } from "../../../redux/store/store";
 
 //local import
-import {
-  fetchProductController,
-  productRatingController,
-} from "../../../redux/controllers/product";
 import Comments from "../components/Comments";
+import axios from "axios";
+import fetchProductThunk from "../../../redux/store/thunks/product";
+import { fetchCommentsThunk } from "../../../redux/store/thunks/comment";
+
+
+
 
 const Product = () => {
-  const dispatch = useDispatch();
-  const { slug } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const { slug } = useParams<string>();
 
   //Product state
   const { product, loading, error } = useSelector(
     (state: RootState) => state.product,
   );
-  //Product Review State
-  // const productReviews = product?.reviews.flatMap((review) => review.comments)
-  // const productComments : string[] = []
+  
 
-  // productReviews?.forEach((Comment)=>{
-  //   productComments.push(Comment)
-  // })
+  const [isCommentMade, setIsCommentMade] = useState(false);
+  const [comment, setComment] = useState<any>({});
 
-  // console.log(productReviews)
-
-  // const rateProductHandler = ()=>{
-  //   productRatingController(dispatch, {
-  //     product: "69095eb9c7852594b8f17ec2",
-  //     user: "69094b43977779bf9ae8f600",
-  //     rating: 10
-  //   })
-  // }
-
+  //useEffect : dispatch
   useEffect(() => {
-    fetchProductController(dispatch, slug!);
+    dispatch(fetchProductThunk(slug!))
+    dispatch(fetchCommentsThunk())
   }, [dispatch]);
-  if (loading) return;
-  <div
-    role="status"
-    className="animate-pulse space-y-8 md:flex md:items-center md:space-y-0 md:space-x-8 rtl:space-x-reverse"
-  >
-    <div className="bg-neutral-quaternary rounded-base flex h-48 w-full items-center justify-center sm:w-96">
-      <svg
-        className="text-fg-disabled h-11 w-11"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
-        />
-      </svg>
-    </div>
-    <div className="w-full">
-      <div className="bg-neutral-quaternary mb-4 h-2.5 w-48 rounded-full"></div>
-      <div className="bg-neutral-quaternary mb-2.5 h-2 max-w-[480px] rounded-full"></div>
-      <div className="bg-neutral-quaternary mb-2.5 h-2 rounded-full"></div>
-      <div className="bg-neutral-quaternary mb-2.5 h-2 max-w-[440px] rounded-full"></div>
-      <div className="bg-neutral-quaternary mb-2.5 h-2 max-w-[460px] rounded-full"></div>
-      <div className="bg-neutral-quaternary h-2 max-w-[360px] rounded-full"></div>
-    </div>
-    <span className="sr-only">Loading...</span>
-  </div>;
+
+  //Loading
+  if (loading)
+    return (
+      <>
+        <div
+          role="status"
+          className="animate-pulse space-y-8 md:flex md:items-center md:space-y-0 md:space-x-8 rtl:space-x-reverse"
+        >
+          <div className="rounded-base flex h-48 w-full items-center justify-center bg-neutral-200 sm:w-96">
+            <svg
+              className="text-fg-disabled h-11 w-11"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
+              />
+            </svg>
+          </div>
+          <div className="w-full">
+            <div className="mb-4 h-2.5 w-48 rounded-full bg-neutral-200"></div>
+            <div className="mb-2.5 h-2 max-w-[480px] rounded-full bg-neutral-200"></div>
+            <div className="mb-2.5 h-2 rounded-full bg-neutral-200"></div>
+            <div className="mb-2.5 h-2 max-w-[440px] rounded-full bg-neutral-200"></div>
+            <div className="mb-2.5 h-2 max-w-[460px] rounded-full bg-neutral-200"></div>
+            <div className="h-2 max-w-[360px] rounded-full bg-neutral-200"></div>
+          </div>
+          <span className="sr-only">Loading...</span>
+        </div>
+      </>
+    );
+
+  //Error
   if (error) return <p className="mt-24">Error: {error}</p>;
+
+
+  //send comment
+  async function sendComment(comment: any) {
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/comments/",
+        comment, {withCredentials: true}
+      );
+      console.log({ response : res});
+    } catch (error: any) {
+      console.log({ mess: error.message });
+    }
+  }
+
+  //make comment
+  const makeCommentHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    //get the comment
+    const commentTextArea = e.currentTarget.elements.namedItem(
+      "comment",
+    ) as HTMLTextAreaElement;
+
+    const comment = {
+      product: product?._id,
+      text: commentTextArea.value,
+    };
+
+    console.log("User comment obj", comment);
+
+    //set comment
+    setComment(comment);
+
+    //empty the text area
+    commentTextArea.value = "";
+
+    //send the post request
+    sendComment(comment);
+  };
+
+  
+  //Product
   return (
     <>
       <Layout>
@@ -230,17 +271,6 @@ const Product = () => {
                   </span>
                   <button
                     className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-gray-200 p-0 text-gray-500"
-                    onClick={() => {
-                      productRatingController(
-                        dispatch,
-                        {
-                          product: `${product?._id}`,
-                          user: `${product?.createdBy}`,
-                          rating: 4,
-                        },
-                        `${product?.slug}`,
-                      );
-                    }}
                   >
                     <svg
                       fill="currentColor"
@@ -257,7 +287,41 @@ const Product = () => {
               </div>
             </div>
           </div>
-          <Comments />
+
+          {/* Give comment */}
+          <div className="bg-white py-8 antialiased lg:py-16 dark:bg-gray-900">
+            <div className="mx-auto max-w-2xl px-4">
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="text-lg font-bold text-gray-900 lg:text-2xl dark:text-white">
+                  Discussion (20)
+                </h2>
+              </div>
+              <form className="mb-6" onSubmit={makeCommentHandler}>
+                <div className="mb-4 rounded-lg rounded-t-lg border border-gray-200 bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
+                  <label htmlFor="comment" className="sr-only">
+                    Your comment
+                  </label>
+                  <textarea
+                    id="comment"
+                    name="comment"
+                    rows={6}
+                    className="w-full border-0 px-0 text-sm text-gray-900 focus:ring-0 focus:outline-none dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                    placeholder="Write a comment..."
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-primary-700 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 inline-flex items-center rounded-lg px-4 py-2.5 text-center text-xs font-medium text-white focus:ring-4"
+                >
+                  Post comment
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* See comments*/}
+          <Comments product={product!} />
         </section>
       </Layout>
     </>
