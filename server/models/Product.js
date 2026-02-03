@@ -8,18 +8,17 @@ const productSchema = mongoose.Schema({
     category: {type: String, enum: ["ankara", "tshirt", "jeans", "hoodie", "jacket"] ,required: true},
     image: {type: String, required: true},
     price: {type: Number, required: true},
-    ratings: {type: Number, default:0 ,required: true},
-    slug: {type: String, required: true},
+    ratings: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+    slug: {type: String, required: true, unique: true},
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    },
-    reviews: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Review"
-        },
-    ]
+    }
 }, {timestamps: true})
 
 
