@@ -18,6 +18,53 @@ router.get('/', async (req, res) => {
     }
 })
 
+//review of a product
+router.get("/:product", async (req, res) => {
+
+    try {
+        const productReviews = await Review.find({ "product": req.params.product })
+        let productReactions = []
+        let productRatings = []
+        let productComments = []
+
+        productReviews.map((productReview) => {
+            //reactions
+            if (productReview.reaction) {
+                productReactions.push(productReview.reaction)
+            };
+
+            //ratings
+            if (productReview.rating) {
+                productRatings.push(productReview.rating)
+            }
+
+            //comments
+            if(productReview.comments){
+                productReview.comments.map((comment)=>{
+                    productComments.push(comment)
+                })
+            }
+        })
+
+        //reaction
+        console.log(`These are the reactions of this product- ${req.params.product}: `, productReactions)
+
+        //ratings
+        console.log(`These are the ratings of this product- ${req.params.product}: `, productRatings)
+
+        //comments
+        console.log(`These are the comments of this product- ${req.params.product}: `, productComments)
+
+
+
+
+        console.log(productReviews)
+        res.status(200).json(productReviews)
+    } catch (error) {
+        console.log(Error(error))
+    }
+})
+
 router.post('/', async (req, res) => {
     const review = {
         product: req.body.product,
@@ -155,6 +202,17 @@ router.delete('/:id', async (req, res) => {
     } catch (error) {
         console.log(error)
         res.json(error)
+    }
+})
+
+router.delete('/delete-all', async (req, res)=>{
+
+    try {
+        console.log("Files is deleting...")
+        await Review.deleteAll()
+        console.log("Files deleted succesfully")
+    } catch (error) {
+        res.json(Error(error))
     }
 })
 
