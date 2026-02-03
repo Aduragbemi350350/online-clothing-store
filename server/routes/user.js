@@ -1,30 +1,20 @@
 import express from 'express'
+
 const router = express.Router()
+import { createUser, currentUser, deleteUsers, getUsers, login, logout } from '../controllers/user.js'
+import { getUser } from '../auth/authMiddleware.js'
 
-import User from '../models/User.js'
+router
+    .get('/', getUsers)
 
-router.get('/', async(req, res)=>{
+    .get('/currentUser', getUser, currentUser)
 
-    try {
-        const users = await User.find()
+    .post('/', createUser)
 
-        console.log(users)
-        res.json(users)
-    } catch (error) {
-        console.log(error)
-    }
-})
+    .post('/login', login)
 
-router.post('/', async(req, res)=>{
-    const {username, email, role} = req.body
-    const user = {
-        username,email,role
-    }
+    .get('/logout', logout)
 
-    const newUser = await User.create(user)
-
-    console.log(newUser)
-    res.json(newUser)
-})
+    .delete('/', deleteUsers)
 
 export default router
