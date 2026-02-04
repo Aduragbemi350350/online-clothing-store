@@ -10,8 +10,8 @@ import cookieParser from 'cookie-parser'
 const app = express();
 app.use(cors({
     origin: [
-        "http://localhost:5173",
-        "https://online-clothing-store-zay8.onrender.com"],
+        "http://localhost:5173/",
+        "https://online-clothing-store-iota.vercel.app/"],
     credentials: true
 }));
 app.use(express.json())
