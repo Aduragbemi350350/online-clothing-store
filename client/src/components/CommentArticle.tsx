@@ -22,7 +22,7 @@ const CommentArticle = ({
   // const [date, setDate] = useState("");
 
   //Input field toggler
-  const toggleReplyInput = (e: React.MouseEvent<HTMLButtonElement>) =>
+  const toggleReplyInput = () =>
     setCommentReply((prev) => !prev);
 
   //send reaction to the DB

@@ -1,7 +1,7 @@
 import { initThemeMode } from "flowbite-react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
+import { BrowserRouter as Router, Routes, Route} from "react-router";
 
 import App from "./App.tsx";
 import "./index.css";

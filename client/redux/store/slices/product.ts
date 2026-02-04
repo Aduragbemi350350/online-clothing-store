@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice} from "@reduxjs/toolkit";
 import fetchProductThunk from '../thunks/product.ts'
 import { Product } from "../../../src/interface";
 
