@@ -1,6 +1,6 @@
 import Layout from "../Layout";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector, UseSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store/store";
 
@@ -23,8 +23,8 @@ const Product = () => {
   );
   
 
-  const [isCommentMade, setIsCommentMade] = useState(false);
-  const [comment, setComment] = useState<any>({});
+  // const [isCommentMade, setIsCommentMade] = useState(false);
+  // const [comment, setComment] = useState<any>({});
 
   //useEffect : dispatch
   useEffect(() => {
@@ -105,7 +105,7 @@ const Product = () => {
     console.log("User comment obj", comment);
 
     //set comment
-    setComment(comment);
+    // setComment(comment);
 
     //empty the text area
     commentTextArea.value = "";

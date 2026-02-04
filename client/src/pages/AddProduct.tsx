@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-import { Product } from "../interface";
 
 //product details that can be uploaded
 interface ProductDetails {

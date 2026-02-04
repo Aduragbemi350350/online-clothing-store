@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router";
-import { User } from "../interface";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../../redux/store/slices/user";
 import Layout from "../Layout";
 
 export default function Signin() {
-  const dispatch = useDispatch();
-  const [user, setuser] = useState<any>();
+  // const dispatch = useDispatch();
+  // const [user, setuser] = useState<any>();
 
   async function signin(user: any) {
     try {
@@ -39,7 +36,8 @@ export default function Signin() {
     };
 
     signin(user);
-    setuser(user);
+
+    // setuser(user);
     console.log({ user: user });
   };
   return (

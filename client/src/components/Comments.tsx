@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
 import CommentArticle from "./CommentArticle";
-import { Comment, Product } from "../interface";
+import {  Product } from "../interface";
+import {  useSelector } from "react-redux";
+import {  RootState } from "../../redux/store/store";
 
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../redux/store/store";
-import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 
 const Comments = ({ product }: { product: Product }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   
   const { loading, comments, error } = useSelector(
     (state: RootState) => state.comments,

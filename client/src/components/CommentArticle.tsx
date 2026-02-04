@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Comment, Product } from "../interface";
+import React, { useState } from "react";
+import { Comment } from "../interface";
 import axios from "axios";
 import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 import { useDispatch } from "react-redux";
@@ -17,9 +17,9 @@ const CommentArticle = ({
   // comment input
   const [commentReply, setCommentReply] = useState(false);
   //user comment
-  const [reply, setReply] = useState("");
+  // const [reply, setReply] = useState("");
   //date
-  const [date, setDate] = useState("");
+  // const [date, setDate] = useState("");
 
   //Input field toggler
   const toggleReplyInput = (e: React.MouseEvent<HTMLButtonElement>) =>

@@ -1,11 +1,10 @@
 import { Link } from "react-router";
 import { User } from "../interface";
-import { useState } from "react";
 import axios from "axios";
 import Layout from "../Layout";
 
 export default function Signup() {
-  const [user, setuser] = useState<User>();
+  // const [user, setuser] = useState<User>();
 
   async function signup(user: User) {
     try {
@@ -36,7 +35,7 @@ export default function Signup() {
       password: password.value,
     };
 
-    setuser(user);
+    // setuser(user);
 
     signup(user);
     console.log({ user: user });

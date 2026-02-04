@@ -1,4 +1,3 @@
-import { DarkThemeToggle } from "flowbite-react";
 import Layout from './Layout.js'
 import Products from "./pages/Products.js"
 
