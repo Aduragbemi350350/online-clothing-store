@@ -3,20 +3,22 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv'
 import slugify from 'slugify';
-import {dbConnector} from './mongoDB/dbConnector.js';
+import { dbConnector } from './mongoDB/dbConnector.js';
 import cookieParser from 'cookie-parser'
 
 //MIDDLEWARE SETUP
 const app = express();
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: [
+        "http://localhost:5173",
+        "https://online-clothing-store-zay8.onrender.com"],
     credentials: true
 }));
 app.use(express.json())
 dotenv.config()
 app.use(express.static('public'))
 dbConnector()
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 //ROUTES
@@ -30,7 +32,7 @@ import seeder from './seeder/seeder.js'
 import commentRouter from './routes/comment.js';
 
 //configure routes
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
     res.json('welcome to homepage')
 })
 app.use("/api/users", users)
@@ -42,6 +44,6 @@ app.use("/api/seeder", seeder)
 app.use('/api/comments', commentRouter)
 
 const port = process.env.PORT || 3000
-app.listen(port, ()=>{
+app.listen(port, () => {
     console.log("Listening on port:", port)
 })
