@@ -34,26 +34,26 @@ const Navbar = () => {
     }
   };
 
-  useEffect(() => {
-    async function fetchUser() {
-      const response = await axios.get(
-        "http://localhost:3000/api/users/currentUser",
-        { withCredentials: true },
-      );
+  // useEffect(() => {
+  //   async function fetchUser() {
+  //     const response = await axios.get(
+  //       "http://localhost:3000/api/users/currentUser",
+  //       { withCredentials: true },
+  //     );
 
-      if (!response) {
-        console.log({ "User login": "User hasn't signed in yet" });
-        return
-      }
+  //     if (!response) {
+  //       console.log({ "User login": "User hasn't signed in yet" });
+  //       return
+  //     }
 
-      console.log({currentuser: response.data})
-      dispatch(loginUser(response.data))
+  //     console.log({currentuser: response.data})
+  //     dispatch(loginUser(response.data))
 
-      setCurrentUser(user)
-    }
+  //     setCurrentUser(user)
+  //   }
 
-    fetchUser()
-  }, [dispatch]);
+  //   fetchUser()
+  // }, [dispatch]);
   return (
     <>
       <nav className="fixed start-0 top-0 z-20 w-full border-b border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-900">
