@@ -8,15 +8,14 @@ export const fetchProductsThunk = createAsyncThunk<
   { rejectValue: string }
 >("products/fetchProducts", async (_, thunkAPI) => {
   try {
-    const response = await axios.get(
-      "https://online-clothing-store-zay8.onrender.com/api/products",
-      { withCredentials: true },
-    );
+    const response = await axios.get("http://localhost:3000/api/products", {
+      withCredentials: true,
+    });
 
-    if (!response) throw new Error("No response!");
     return response.data as Product[];
-  } catch (error) {
-    return thunkAPI.rejectWithValue("Request failed!");
+  } catch (error: any) {
+    const message = (error?.response.data) || error.message 
+    return thunkAPI.rejectWithValue(message);
   }
 });
 
