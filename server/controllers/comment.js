@@ -1,6 +1,4 @@
-import { text } from "express"
 import createCommentTree from "../utilities/createCommentTree.js"
-import dateToISO from "../utilities/dateToISO.js"
 import { makeReaction, reverseReaction } from "../utilities/userReactions.js"
 import Comment from "../models/Comment.js"
 
@@ -16,8 +14,12 @@ export const getComments = async (req, res) => {
         res.status(200).json(commentTree)
         console.log("Comment tree: ", commentTree)
     } catch (error) {
-        console.log("Get comment error: ", error.message)
-        res.status(500).json({ "Get comment error: ": error.message })
+        const err = errorHandler(error)
+        console.log({
+            mess: "Get comments error",
+            errMess: err
+        })
+        res.status(err.status).json(err)
     }
 }
 
@@ -47,8 +49,12 @@ export const postComment = async (req, res) => {
         console.log({ mess: commentCreated })
         res.status(200).json({ mess: commentCreated })
     } catch (error) {
-        console.log({ message: error.message })
-        res.status(500).json({ mess: error.message })
+        const err = errorHandler(error)
+        console.log({
+            mess: "Post comment error",
+            errMess: err
+        })
+        res.status(err.status).json(err)
     }
 }
 
@@ -104,8 +110,12 @@ export const reactToComment = async (req, res) => {
             return
         }
     } catch (error) {
-        console.log({ "make reaction error": error.message })
-        res.status(200).json({ "make reaction error": error.message })
+        const err = errorHandler(error)
+        console.log({
+            mess: "React to comment error",
+            errMess: err
+        })
+        res.status(err.status).json(err)
     }
 }
 
@@ -116,7 +126,12 @@ export const deleteComments = async (req, res) => {
         await Comment.deleteMany()
         res.status(200).json({ mess: "All comments has been deleted!" })
     } catch (error) {
-        console.log({ mess: error.message })
+        const err = errorHandler(error)
+        console.log({
+            mess: "Delete comments error",
+            errMess: err
+        })
+        res.status(err.status).json(err)
     }
 }
 

@@ -1,7 +1,7 @@
 import User from "../models/User.js"
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import { generateToken } from "../auth/authMiddleware.js"
+import errorHandler from "../utilities/errorHandler.js"
 
 export const getUsers = async (req, res) => {
     try {
@@ -10,8 +10,12 @@ export const getUsers = async (req, res) => {
         console.log({ mess: users })
         res.status(200).json({ mess: users })
     } catch (error) {
-        console.log({ mess: error.message })
-        res.status(500).json({ mess: error.message })
+        const err = errorHandler(error)
+        console.log({ 
+            mess: "Get user error",
+            errMess: err 
+        })
+        res.status(err.status).json(err)
     }
 }
 
@@ -29,8 +33,12 @@ export const createUser = async (req, res) => {
         console.log({ mess: user })
         res.status(200).json({ mess: user })
     } catch (error) {
-        console.log({ mess: error.message })
-        res.status(500).json({ mess: error.message })
+        const err = errorHandler(error)
+        console.log({ 
+            mess: "Create user error",
+            errMess: err 
+        })
+        res.status(err.status).json(err)
     }
 }
 
@@ -82,8 +90,12 @@ export const login = async (req, res) => {
                 .json(user)
         }
     } catch (error) {
-        console.log({ "Login error message": error.message })
-        res.status(401).json({ "Login error message": error.message })
+        const err = errorHandler(error)
+        console.log({
+            mess: "Login error", 
+            errMess: err,  
+        })
+        res.status(err.status).json(err)
     }
 }
 
@@ -100,8 +112,12 @@ export const logout = (req, res) => {
 
         console.log("Cookie cleared!")
     } catch (error) {
-        console.log({ "logout error message": error.message })
-        res.status(401).json({ "logout error message": error.message })
+        const err = errorHandler(error)
+        console.log({ 
+            mess: "Logout error",
+            errMess: err
+         })
+        res.status(err.status).json(err)
     }
 }
 
@@ -110,8 +126,12 @@ export const deleteUsers = async (req, res) => {
         await User.deleteMany()
         res.status(200).json({ "delete all users": "Users deleted!" })
     } catch (error) {
-        console.log({ "delete all users error": error.message })
-        res.status(401).json({ "delete all users error": error.message })
+        const err = errorHandler(error)
+        console.log({ 
+            mess: "Delete user error",
+            errMess: err 
+        })
+        res.status(err.status).json(err)
     }
 }
 
@@ -129,7 +149,11 @@ export const currentUser = async (req, res) => {
         if (!currentUser) return console.log("User isn't logged in yet!")
         res.status(200).json(currentUser)
     } catch (error) {
-        console.log({ "Get current user": error.message })
-        res.status(401).json({ "Get current user": error.message })
+        const err = errorHandler(error)
+        console.log({ 
+            mess: "Current user error",
+            errMess: err
+        })
+        res.status(err.status).json(err)
     }
 }
