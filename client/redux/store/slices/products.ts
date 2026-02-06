@@ -8,7 +8,7 @@ import fetchProductsThunk from "../thunks/products";
 interface ProductState{
   products: Product[],
   loading: boolean,
-  error: string | null
+  error: any
 }
 
 const initialState: ProductState = {
@@ -35,7 +35,7 @@ const productsSlice = createSlice({
       .addCase(fetchProductsThunk.rejected, (state, action)=>{
         state.loading = false,
         state.products = [],
-        state.error = action.error.message! || action.payload!
+        state.error = action.payload!
       })
   }
 })
