@@ -28,7 +28,10 @@ const Products = () => {
           className="mt-12 grid animate-pulse grid-cols-4 md:items-center md:space-y-0 md:space-x-8 rtl:space-x-reverse"
         >
           {skeletonLoop.map((no) => (
-            <div key={no} className="rounded-base flex h-48 items-center justify-center bg-neutral-200 sm:w-96">
+            <div
+              key={no}
+              className="rounded-base flex h-48 items-center justify-center bg-neutral-200 sm:w-96"
+            >
               <svg
                 className="text-fg-disabled h-11 w-11"
                 aria-hidden="true"
@@ -53,30 +56,43 @@ const Products = () => {
     );
 
   //error
-  if (error) return <p className="mt-24">Error: {error}</p>;
+  console.log({ productsError: error });
+  if (error) {
+    return (
+      <section className="w-100 h-100 flex justify-center items-center">
+        {error.status === 500 && <h4 className="mt-30">{error.message}</h4>}
+      </section>
+    );
+  }
 
   //default - products
-  const availableProducts = products.map((product) => (
-    <div key={product._id} className="group relative">
-      <Link to={`/${product.slug}`}>
-        <img
-          src={product.image}
-          alt="Front of men&#039;s Basic Tee in black."
-          className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
-        />
-        <div className="mt-4 flex justify-between">
-          <div>
-            <h3 className="text-sm text-gray-700">
-              <span aria-hidden="true" className="absolute inset-0"></span>
-              {product.name}
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">{product.description}</p>
+  let availableProducts;
+  console.log({ availProducts: products });
+  if (products.length > 0) {
+    availableProducts = products.map((product) => (
+      <div key={product._id} className="group relative">
+        <Link to={`/${product.slug}`}>
+          <img
+            src={product.image}
+            alt="Front of men&#039;s Basic Tee in black."
+            className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+          />
+          <div className="mt-4 flex justify-between">
+            <div>
+              <h3 className="text-sm text-gray-700">
+                <span aria-hidden="true" className="absolute inset-0"></span>
+                {product.name}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {product.description}
+              </p>
+            </div>
+            <p className="text-sm font-medium text-gray-900">{product.price}</p>
           </div>
-          <p className="text-sm font-medium text-gray-900">{product.price}</p>
-        </div>
-      </Link>
-    </div>
-  ));
+        </Link>
+      </div>
+    ));
+  }
 
   return (
     <>
