@@ -6,7 +6,7 @@ import { Product } from "../../../src/interface";
 interface ProductStateType {
   product: Product | null;
   loading: boolean;
-  error: string | null;
+  error: any;
 }
 
 const initialState: ProductStateType = {
@@ -32,7 +32,7 @@ const ProductSlice = createSlice({
         })
         .addCase(fetchProductThunk.rejected, (state, action)=>{
           state.loading = false
-          state.error = action.error.message! || action.payload!
+          state.error = action.payload
           state.product = null
         })
   }
