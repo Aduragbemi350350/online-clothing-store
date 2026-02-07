@@ -83,7 +83,7 @@ export const getProduct = async (req, res) => {
         const product = await Product.findOne({ slug: req.params.slug })
 
         console.log(product)
-        res.json(product)
+        res.status(200).json(product)
     } catch (error) {
         const err = errorHandler(error)
         console.log({
