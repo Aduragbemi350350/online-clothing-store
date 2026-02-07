@@ -10,8 +10,6 @@ import { ErrorPage } from "./ErrorPages";
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const skeletonLoop = [1, 2, 3, 4, 5, 6, 7, 8];
-
   const { products, loading, error } = useSelector(
     (state: RootState) => state.products,
   );
@@ -48,6 +46,31 @@ const Products = () => {
       </div>
     ));
   }
+  //pre-loader
+  let preloader = [];
+  for (let i = 0; i < 8; i++) {
+    preloader.push(
+      <div className="flex h-60 animate-pulse items-center justify-center bg-neutral-200" key={i}>
+        <svg
+          className="text-fg-disabled h-11 w-11"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
+          />
+        </svg>
+      </div>,
+    );
+  }
 
   //RETURNS
   //RETURNS
@@ -56,37 +79,13 @@ const Products = () => {
   //loading
   if (loading)
     return (
-      <>
-        <div
-          role="status"
-          className="mt-12 grid animate-pulse grid-cols-4 md:items-center md:space-y-0 md:space-x-8 rtl:space-x-reverse"
-        >
-          {skeletonLoop.map((no) => (
-            <div
-              key={no}
-              className="rounded-base flex h-48 items-center justify-center bg-neutral-200 sm:w-96"
-            >
-              <svg
-                className="text-fg-disabled h-11 w-11"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
-                />
-              </svg>
-            </div>
-          ))}
+    <section className="bg-white">
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          {preloader}
         </div>
-      </>
+      </div>
+    </section>
     );
 
   //error
@@ -97,13 +96,13 @@ const Products = () => {
 
   //products
   return (
-      <section className="bg-white">
-        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {availableProducts}
-          </div>
+    <section className="bg-white">
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          {availableProducts}
         </div>
-      </section>
+      </div>
+    </section>
   );
 };
 
