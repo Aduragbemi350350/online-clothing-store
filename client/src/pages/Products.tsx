@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import { Link } from "react-router";
 import fetchProductsThunk from "../../redux/store/thunks/products";
+import { ErrorPage } from "./ErrorPages";
 
 //import router, route, path
 
@@ -18,6 +19,39 @@ const Products = () => {
   useEffect(() => {
     dispatch(fetchProductsThunk());
   }, [dispatch]);
+
+  //default - products
+  let availableProducts;
+  console.log({ availProducts: products });
+  if (products.length > 0) {
+    availableProducts = products.map((product) => (
+      <div key={product._id} className="group relative">
+        <Link to={`/${product.slug}`}>
+          <img
+            src={product.image}
+            alt="Front of men&#039;s Basic Tee in black."
+            className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+          />
+          <div className="mt-4 flex justify-between">
+            <div>
+              <h3 className="text-sm text-gray-700">
+                <span aria-hidden="true" className="absolute inset-0"></span>
+                {product.name}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {product.description}
+              </p>
+            </div>
+            <p className="text-sm font-medium text-gray-900">{product.price}</p>
+          </div>
+        </Link>
+      </div>
+    ));
+  }
+
+  //RETURNS
+  //RETURNS
+  //RETURNS
 
   //loading
   if (loading)
@@ -58,52 +92,18 @@ const Products = () => {
   //error
   console.log({ productsError: error });
   if (error) {
-    return (
-      <section className="w-100 h-100 flex justify-center items-center">
-        {error.status === 500 && <h4 className="mt-30">{error.message}</h4>}
-      </section>
-    );
+    return <ErrorPage error={error} />;
   }
 
-  //default - products
-  let availableProducts;
-  console.log({ availProducts: products });
-  if (products.length > 0) {
-    availableProducts = products.map((product) => (
-      <div key={product._id} className="group relative">
-        <Link to={`/${product.slug}`}>
-          <img
-            src={product.image}
-            alt="Front of men&#039;s Basic Tee in black."
-            className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
-          />
-          <div className="mt-4 flex justify-between">
-            <div>
-              <h3 className="text-sm text-gray-700">
-                <span aria-hidden="true" className="absolute inset-0"></span>
-                {product.name}
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                {product.description}
-              </p>
-            </div>
-            <p className="text-sm font-medium text-gray-900">{product.price}</p>
-          </div>
-        </Link>
-      </div>
-    ));
-  }
-
+  //products
   return (
-    <>
-      <div className="bg-white">
+      <section className="bg-white">
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {availableProducts}
           </div>
         </div>
-      </div>
-    </>
+      </section>
   );
 };
 
