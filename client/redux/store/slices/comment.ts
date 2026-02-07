@@ -6,7 +6,7 @@ import { fetchCommentsThunk } from "../thunks/comment";
 interface CommentState{
     loading: boolean,
     comments: Comment[],
-    error : string | null
+    error : any
 }
 
 const initialState : CommentState = {
