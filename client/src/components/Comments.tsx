@@ -11,9 +11,20 @@ const Comments = ({ product }: { product: Product }) => {
     (state: RootState) => state.comments,
   );
 
+  //RETURNS
+  //RETURNS
+  //RETURNS
 
+  //loading
   if(loading) return <p>Comment loading...</p>
-  if(error) return <p>{`Error occured: ${error}`}</p>
+
+  //error
+  console.log({
+    commentError: error
+  })
+  if(error) return <p className="h3 mx-30">{`No comments: ${error.message}`}</p>
+
+  //comments
   return (
     <section>
       {comments.map(

@@ -14,9 +14,14 @@ export const fetchProductsThunk = createAsyncThunk<
 
     return response.data as Product[];
   } catch (error: any) {
+    console.log({
+      message: "Product fetch failed",
+      products: error
+    })
     const message = (error?.response.data) || error.message 
     return thunkAPI.rejectWithValue(message);
   }
 });
 
 export default fetchProductsThunk;
+

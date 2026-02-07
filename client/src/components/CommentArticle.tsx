@@ -16,10 +16,6 @@ const CommentArticle = ({
   //state
   // comment input
   const [commentReply, setCommentReply] = useState(false);
-  //user comment
-  // const [reply, setReply] = useState("");
-  //date
-  // const [date, setDate] = useState("");
 
   //Input field toggler
   const toggleReplyInput = () =>
