@@ -70,44 +70,46 @@ const Product = () => {
   //RETURNS
 
   //Loading
-  if (loading)
+  if (loading) {
     return (
-      <>
-        <div
-          role="status"
-          className="animate-pulse space-y-8 md:flex md:items-center md:space-y-0 md:space-x-8 rtl:space-x-reverse"
-        >
-          <div className="rounded-base flex h-48 w-full items-center justify-center bg-neutral-200 sm:w-96">
-            <svg
-              className="text-fg-disabled h-11 w-11"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
-              />
-            </svg>
+      <Layout>
+        <section className="body-font overflow-hidden text-gray-600">
+          <div className="container mx-auto px-5 py-24">
+            <div className="mx-auto flex flex-wrap lg:w-4/5">
+              <div className="rounded-base flex h-48 w-full animate-pulse items-center justify-center bg-neutral-200 sm:w-96">
+                <svg
+                  className="text-fg-disabled h-11 w-11"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"
+                  />
+                </svg>
+              </div>
+              <div className="mt-6 w-full animate-pulse lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10">
+                <div className="mb-4 h-2.5 w-48 rounded-full bg-neutral-200"></div>
+                <div className="mb-2.5 h-2 max-w-[480px] rounded-full bg-neutral-200"></div>
+                <div className="mb-2.5 h-2 rounded-full bg-neutral-200"></div>
+                <div className="mb-2.5 h-2 max-w-[440px] rounded-full bg-neutral-200"></div>
+                <div className="mb-2.5 h-2 max-w-[460px] rounded-full bg-neutral-200"></div>
+                <div className="h-2 max-w-[360px] rounded-full bg-neutral-200"></div>
+              </div>
+              <span className="sr-only">Loading...</span>
+            </div>
           </div>
-          <div className="w-full">
-            <div className="mb-4 h-2.5 w-48 rounded-full bg-neutral-200"></div>
-            <div className="mb-2.5 h-2 max-w-[480px] rounded-full bg-neutral-200"></div>
-            <div className="mb-2.5 h-2 rounded-full bg-neutral-200"></div>
-            <div className="mb-2.5 h-2 max-w-[440px] rounded-full bg-neutral-200"></div>
-            <div className="mb-2.5 h-2 max-w-[460px] rounded-full bg-neutral-200"></div>
-            <div className="h-2 max-w-[360px] rounded-full bg-neutral-200"></div>
-          </div>
-          <span className="sr-only">Loading...</span>
-        </div>
-      </>
+        </section>
+      </Layout>
     );
+  }
 
   //Error
   console.log({ productError: error });
