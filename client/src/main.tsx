@@ -1,7 +1,7 @@
 import { initThemeMode } from "flowbite-react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route} from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router";
 
 import App from "./App.tsx";
 import "./index.css";
@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import Signup from "./pages/Signup.tsx";
 import Signin from "./pages/Signin.tsx";
 import AddProduct from "./pages/AddProduct.tsx";
+import NotFoundPage from "./pages/notFoundPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -21,7 +22,10 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/:slug" element={<Product />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
-          <Route path="/product/create" element={< AddProduct/>} />
+          <Route path="/product/create" element={<AddProduct />} />
+
+          {/* Catch all Route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </Provider>
