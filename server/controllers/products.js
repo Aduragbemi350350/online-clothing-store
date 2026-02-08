@@ -82,6 +82,12 @@ export const getProduct = async (req, res) => {
     try {
         const product = await Product.findOne({ slug: req.params.slug })
 
+        const error = {
+            name: "Document Not Found Error!",
+            message: "Page Not Found!",
+            status: 400
+        }
+        if(!product) return res.status(400).json(error)
         console.log(product)
         res.status(200).json(product)
     } catch (error) {
