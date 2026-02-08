@@ -5,11 +5,7 @@ interface Error {
   message: string;
   status: number;
 }
-export const ErrorPage = ({
-  error: {message, status },
-}: {
-  error: Error;
-}) => {
+export const ErrorPage = ({ error: { message, status } }: { error: Error }) => {
   return (
     <Layout>
       <section className="bg-white dark:bg-gray-900">

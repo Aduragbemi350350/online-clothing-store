@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from "../../redux/store/store";
 import { Link } from "react-router";
 import fetchProductsThunk from "../../redux/store/thunks/products";
 import { ErrorPage } from "./ErrorPages";
+import Layout from "../Layout";
 
 //import router, route, path
 
@@ -50,7 +51,10 @@ const Products = () => {
   let preloader = [];
   for (let i = 0; i < 8; i++) {
     preloader.push(
-      <div className="flex h-60 animate-pulse items-center justify-center bg-neutral-200" key={i}>
+      <div
+        className="flex h-60 animate-pulse items-center justify-center bg-neutral-200"
+        key={i}
+      >
         <svg
           className="text-fg-disabled h-11 w-11"
           aria-hidden="true"
@@ -79,13 +83,15 @@ const Products = () => {
   //loading
   if (loading)
     return (
-    <section className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {preloader}
-        </div>
-      </div>
-    </section>
+      <Layout>
+        <section className="bg-white">
+          <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+            <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+              {preloader}
+            </div>
+          </div>
+        </section>
+      </Layout>
     );
 
   //error
@@ -96,13 +102,15 @@ const Products = () => {
 
   //products
   return (
-    <section className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {availableProducts}
+    <Layout>
+      <section className="bg-white">
+        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            {availableProducts}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </Layout>
   );
 };
 
