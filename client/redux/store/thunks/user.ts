@@ -7,19 +7,53 @@ interface UserDetails {
   email: string;
 }
 
-const fetchUserThunk = createAsyncThunk<UserDetails, void, {rejectValue: string}>("user/getUser", async(id, thunkAPI)=>{
-    try {
-        const response = await axios.get(`http://localhost:3000/api/users/${id}`)
+const fetchUserThunk = createAsyncThunk<
+  UserDetails,
+  void,
+  { rejectValue: any }
+>("user/getUser", async (_, thunkAPI) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/api/users/currentUser`,
+      { withCredentials: true },
+    );
 
-        if(!response)  {
-            console.log({"Fetch user": "There's no response"})
-            return thunkAPI.rejectWithValue("There's no response: User can't be fetched")
-        }
-        return response.data
-    } catch (error: any) {
-        console.log({"Get User": error?.message})
-        return thunkAPI.rejectWithValue("An error occured!")
+    console.log({
+      message: "Fetch user result!",
+      user: response,
+    });
+
+    if (!response) {
+      const error = {
+        name: "Document Not Found Error!",
+        message: "User not found!",
+        status: 400,
+      };
+      return thunkAPI.rejectWithValue(error);
     }
-})
 
-export default fetchUserThunk
+    return response.data;
+  } catch (error: any) {
+    console.log({
+      message: "User fetch failed",
+      user: error,
+    });
+
+    let errMessage;
+
+    if (error.status === 500) {
+      errMessage = {
+        name: "Unknown error",
+        message: "Internal server error",
+        status: 500,
+      };
+
+      return thunkAPI.rejectWithValue(errMessage);
+    }
+
+    errMessage = error?.response.data || error.message;
+    return thunkAPI.rejectWithValue(errMessage);
+  }
+});
+
+export default fetchUserThunk;
