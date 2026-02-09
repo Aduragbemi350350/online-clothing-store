@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import fetchUserThunk from "../thunks/user";
 
 interface UserDetails {
   _id: string;
@@ -9,7 +10,7 @@ interface UserDetails {
 interface UserState {
   loading: boolean;
   user: UserDetails;
-  error: string | null;
+  error: any;
 }
 
 const initialState: UserState = {
@@ -40,7 +41,33 @@ const userSlice = createSlice({
           email: "",
         }));
     },
-  }
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(fetchUserThunk.rejected, (state, action) => {
+        ((state.loading = false),
+          (state.user = {
+            _id: "",
+            username: "",
+            email: "",
+          }),
+          (state.error = action.payload));
+      })
+      .addCase(fetchUserThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.user = action.payload;
+      })
+      .addCase(fetchUserThunk.pending, (state) => {
+        ((state.loading = true),
+          (state.user = {
+            _id: "",
+            username: "",
+            email: "",
+          }),
+          (state.error = null));
+      });
+  },
 });
 
 export const { loginUser, logoutuser } = userSlice.actions;
