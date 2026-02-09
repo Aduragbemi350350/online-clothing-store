@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
-import { RootState } from "../../redux/store/store";
+import { AppDispatch, RootState } from "../../redux/store/store";
 import axios from "axios";
 import { loginUser, logoutuser } from "../../redux/store/slices/user";
+import fetchUserThunk from "../../redux/store/thunks/user";
 
 const Navbar = () => {
   const { user } = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
-  const [currentUser, setCurrentUser] = useState({
-    _id :"",
-    username: "",
-    email: ""
+  const dispatch = useDispatch<AppDispatch>();
+
+  console.log({
+    name: "User logged In",
+    currentUser: user
   })
+  
 
-  console.log({ "user logged in": user });
-
+  //handle signout
   const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -28,32 +29,19 @@ const Navbar = () => {
       if (!respose) console.log({ "User logout": "User cannot logout" });
 
       console.log({ "User logout": respose });
+
       dispatch(logoutuser());
     } catch (error: any) {
       console.log({ "User logout error": error.message });
     }
   };
 
-  // useEffect(() => {
-  //   async function fetchUser() {
-  //     const response = await axios.get(
-  //       "http://localhost:3000/api/users/currentUser",
-  //       { withCredentials: true },
-  //     );
 
-  //     if (!response) {
-  //       console.log({ "User login": "User hasn't signed in yet" });
-  //       return
-  //     }
-
-  //     console.log({currentuser: response.data})
-  //     dispatch(loginUser(response.data))
-
-  //     setCurrentUser(user)
-  //   }
-
-  //   fetchUser()
-  // }, [dispatch]);
+  useEffect(()=>{
+    //dispatch fetch user
+    dispatch(fetchUserThunk())
+    console.log("Navbar dispatched fetch user thunk!")
+  }, [dispatch])
   return (
     <>
       <nav className="fixed start-0 top-0 z-20 w-full border-b border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-900">
@@ -72,7 +60,7 @@ const Navbar = () => {
             </span>
           </Link>
           <div className="flex gap-2 space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
-            {currentUser._id ? (
+            { user?._id ? (
               <button
                 onClick={handleSignout}
                 type="button"
