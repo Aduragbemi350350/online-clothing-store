@@ -138,15 +138,23 @@ export const deleteUsers = async (req, res) => {
 export const currentUser = async (req, res) => {
     try {
         const user = req.user
-        console.log({currentUser: user})
+        
+        const currentUser = await User.findById(user._id).select("password")
+        
+        console.log({
+            name: "Fetch the current user",
+            currentUser: user
+        })
 
-        const currentUser = {
-            _id: user._id,
-            name: user.username,
-            email: user.email
+        if (!currentUser){
+            const error = {
+                name: "Document Not Found Error!",
+                message: "User not found!",
+                status: 400
+            }
+            return res.status(400).json(error)
         }
 
-        if (!currentUser) return console.log("User isn't logged in yet!")
         res.status(200).json(currentUser)
     } catch (error) {
         const err = errorHandler(error)
