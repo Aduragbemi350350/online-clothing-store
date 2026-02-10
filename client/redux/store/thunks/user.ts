@@ -14,7 +14,7 @@ const fetchUserThunk = createAsyncThunk<
 >("user/getUser", async (_, thunkAPI) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/api/users/currentUser`,
+      `http://localhost:3000/api/users/currentuser`,
       { withCredentials: true },
     );
 

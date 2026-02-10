@@ -1,6 +1,7 @@
 import generateRandomNo from "../utilities/generateRandomNo.js";
 import nodemailer from "nodemailer"
-
+import dns from 'dns'
+dns.setDefaultResultOrder('ipv4first')
 
 //generate OTP
 export const otpGenerator = {
@@ -33,6 +34,7 @@ export const sendUserOTP = async (mail) => {
             host: process.env.EMAIL_HOST,
             port: process.env.EMAIL_PORT,
             secure: false,
+            family: 4,
             auth: {
                 user: process.env.APP_EMAIL,
                 pass: process.env.APP_PASSWORD

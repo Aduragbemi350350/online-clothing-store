@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router";
 import axios from "axios";
 import Layout from "../Layout";
-import { loginUser } from "../../redux/store/slices/user";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 import fetchUserThunk from "../../redux/store/thunks/user";
