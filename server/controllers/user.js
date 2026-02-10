@@ -2,6 +2,7 @@ import User from "../models/User.js"
 import bcrypt from 'bcrypt'
 import { generateToken } from "../auth/authMiddleware.js"
 import errorHandler from "../utilities/errorHandler.js"
+import { generateOTPMail, otpGenerator, sendUserOTP } from "../auth/emailVerification.js"
 
 export const getUsers = async (req, res) => {
     try {
@@ -11,9 +12,9 @@ export const getUsers = async (req, res) => {
         res.status(200).json({ mess: users })
     } catch (error) {
         const err = errorHandler(error)
-        console.log({ 
+        console.log({
             mess: "Get user error",
-            errMess: err 
+            errMess: err
         })
         res.status(err.status).json(err)
     }
@@ -30,13 +31,47 @@ export const createUser = async (req, res) => {
 
         const user = await User.create(userDetails)
 
-        console.log({ mess: user })
-        res.status(200).json({ mess: user })
+        //Generate and update user object
+        user.otp = otpGenerator.otp
+        user.otpExpiresAt = otpGenerator.otpExpiresAt
+
+        //see user object
+        console.log({
+            mess: "Add OTP to user object",
+            updatedUser: user
+        })
+
+        //create otp mail
+        const mail = generateOTPMail(user)
+
+        //see mail
+        console.log({
+            mess: "Mail created",
+            mail
+        })
+
+        //send mail
+        const response = sendUserOTP(mail)
+
+        console.log({
+            mess: "OTP sent to user",
+            response
+        })
+
+        await user.save()
+        console.log({
+            mess: "New user signed up",
+            user
+        })
+        res.status(200).json({
+            mess: "Mail created",
+            mail
+        })
     } catch (error) {
         const err = errorHandler(error)
-        console.log({ 
+        console.log({
             mess: "Create user error",
-            errMess: err 
+            errMess: err
         })
         res.status(err.status).json(err)
     }
@@ -92,8 +127,8 @@ export const login = async (req, res) => {
     } catch (error) {
         const err = errorHandler(error)
         console.log({
-            mess: "Login error", 
-            errMess: err,  
+            mess: "Login error",
+            errMess: err,
         })
         res.status(err.status).json(err)
     }
@@ -113,10 +148,10 @@ export const logout = (req, res) => {
         console.log("Cookie cleared!")
     } catch (error) {
         const err = errorHandler(error)
-        console.log({ 
+        console.log({
             mess: "Logout error",
             errMess: err
-         })
+        })
         res.status(err.status).json(err)
     }
 }
@@ -127,9 +162,31 @@ export const deleteUsers = async (req, res) => {
         res.status(200).json({ "delete all users": "Users deleted!" })
     } catch (error) {
         const err = errorHandler(error)
-        console.log({ 
+        console.log({
             mess: "Delete user error",
-            errMess: err 
+            errMess: err
+        })
+        res.status(err.status).json(err)
+    }
+}
+
+export const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id)
+
+        console.log({
+            mess: "User deleted",
+            user
+        })
+        res.status(200).json({
+            mess: "User deleted",
+            user
+        })
+    } catch (error) {
+        const err = errorHandler(error)
+        console.log({
+            mess: "Current user error",
+            errMess: err
         })
         res.status(err.status).json(err)
     }
@@ -138,15 +195,15 @@ export const deleteUsers = async (req, res) => {
 export const currentUser = async (req, res) => {
     try {
         const user = req.user
-        
+
         const currentUser = await User.findById(user._id).select("password")
-        
+
         console.log({
-            name: "Fetch the current user",
+            mess: "Fetch the current user",
             currentUser: user
         })
 
-        if (!currentUser){
+        if (!currentUser) {
             const error = {
                 name: "Document Not Found Error!",
                 message: "User not found!",
@@ -158,7 +215,7 @@ export const currentUser = async (req, res) => {
         res.status(200).json(currentUser)
     } catch (error) {
         const err = errorHandler(error)
-        console.log({ 
+        console.log({
             mess: "Current user error",
             errMess: err
         })
