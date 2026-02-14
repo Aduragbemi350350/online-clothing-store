@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import slugify from 'slugify';
 import { dbConnector } from './mongoDB/dbConnector.js';
 import cookieParser from 'cookie-parser'
+import cloudinaryConfig from './cloudinary/config.js';
 
 //MIDDLEWARE SETUP
 const app = express();
@@ -20,6 +21,9 @@ app.use(express.static('public'))
 dbConnector()
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+//cloudinary
+cloudinaryConfig()
+
 
 //ROUTES
 //import routes
