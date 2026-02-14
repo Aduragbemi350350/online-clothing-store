@@ -12,7 +12,7 @@ import { authMiddleWare, getUser } from '../auth/authMiddleware.js'
 router
     .get('/',getUser, getProducts)
 
-    .post('/', authMiddleWare ,multerUpload.array("images"), createProduct)
+    .post('/', authMiddleWare, multerUpload.single("images"), createProduct)
 
     .get('/:slug', getProduct)
 

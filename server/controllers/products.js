@@ -1,6 +1,7 @@
 import Product from "../models/Product.js"
 import errorHandler from "../utilities/errorHandler.js"
 import fileRenamer from "../utilities/fileRenamer.js"
+import { cloudinaryUpload } from '../cloudinary/cloudinary.js'
 
 //fetch all products
 export const getProducts = async (req, res) => {
@@ -28,22 +29,38 @@ export const getProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
     try {
         const user = req.user
-        const files = req.files
+        const file = req.file
+
         const { name, price, description, category } = req.body
 
-        if (!files || !description || !name || !price || !category || !user) {
+        //validate arguments
+        if (!file || !description || !name || !price || !category || !user) {
             console.log({ "Create product": "Product images or product details aren't available" })
             res.status(400).json({ "Create product": "Product images or product details aren't available" })
             return
         }
-
-        //get image name
-        const imageName = files.map((file) => {
-            const name = fileRenamer(file.originalname)
-            return name
+        console.log({
+            mess: "File object",
+            file
         })
 
-        console.log(imageName)
+
+        //upload to cloudinary
+        const response = cloudinaryUpload(file.path, "image", res)
+
+        //get image properties from cloudinary response
+        const imageProp = {
+            publicKey: response.public_key,
+            secureURL: response.secure_url,
+            resoureType: response.resoure_type,
+            folder: response.asset_folder,
+            originalFilename: response.original_filename
+        }
+        console.log({
+            mess: "save image to cloudinary",
+            imageProp
+        })
+
 
         //create a product
         const product = {
@@ -51,7 +68,7 @@ export const createProduct = async (req, res) => {
             price,
             description,
             category,
-            image: imageName[0],
+            image: imageProp,
             slug: slugify(name),
             createdBy: user._id
         }
@@ -87,7 +104,7 @@ export const getProduct = async (req, res) => {
             message: "Page Not Found!",
             status: 400
         }
-        if(!product) return res.status(400).json(error)
+        if (!product) return res.status(400).json(error)
         console.log(product)
         res.status(200).json(product)
     } catch (error) {

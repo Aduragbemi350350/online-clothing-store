@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import  Review  from "./Review.js";
 
-
 const productSchema = mongoose.Schema({
     name: {type: String, required: true},
     description: {type: String, required: true},
