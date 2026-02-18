@@ -23,7 +23,7 @@ export interface Product {
   name: string;
   description: string;
   category: string;
-  image: Image[];
+  images: Image[];
   price: number;
   createdBy: string;
   slug: string;

@@ -11,7 +11,8 @@ import { Provider } from "react-redux";
 import Signup from "./pages/Signup.tsx";
 import Signin from "./pages/Signin.tsx";
 import AddProduct from "./pages/AddProduct.tsx";
-import NotFoundPage from "./pages/notFoundPage.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
+import UpdateProduct from "./pages/UpdateProduct.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/product/create" element={<AddProduct />} />
+          <Route path="/product/update" element={<UpdateProduct />} />
 
           {/* Catch all Route */}
           <Route path="*" element={<NotFoundPage />} />

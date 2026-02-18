@@ -1,7 +1,7 @@
 import Layout from "../Layout";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store/store";
 
 //local import
@@ -126,7 +126,7 @@ const Product = () => {
             <img
               alt="ecommerce"
               className="h-64 w-full rounded object-cover object-center lg:h-auto lg:w-1/2"
-              src={product?.image[0].secureURL}
+              src={product?.images[0]?.secureURL}
             />
             <div className="mt-6 w-full lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10">
               <h2 className="title-font text-sm tracking-widest text-gray-500">
@@ -282,6 +282,13 @@ const Product = () => {
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                   </svg>
                 </button>
+              </div>
+              
+              {/* update */}
+              <div>
+                <Link to="/product/update">
+                  <button className="bg-blue-600 p-2 text-white rounded-md mt-4">Update Product</button>
+                </Link>
               </div>
             </div>
           </div>
