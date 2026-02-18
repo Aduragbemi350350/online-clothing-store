@@ -126,7 +126,7 @@ const Product = () => {
             <img
               alt="ecommerce"
               className="h-64 w-full rounded object-cover object-center lg:h-auto lg:w-1/2"
-              src={product?.image}
+              src={product?.image[0].secureURL}
             />
             <div className="mt-6 w-full lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10">
               <h2 className="title-font text-sm tracking-widest text-gray-500">

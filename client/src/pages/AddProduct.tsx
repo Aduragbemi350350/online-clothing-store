@@ -11,7 +11,7 @@ interface ProductDetails {
 }
 
 export default function AddProduct() {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>();
 
   const [productDetails, setProductDetails] = useState<ProductDetails>();
 
@@ -24,8 +24,8 @@ export default function AddProduct() {
       form.append("description", productDetails?.description!);
       form.append("category", productDetails?.category!);
 
-      files.map((file) => {
-        form.append("images", file);
+      files?.map((file) => {
+        return form.append("images", file);
       });
 
       const response = await axios.post(

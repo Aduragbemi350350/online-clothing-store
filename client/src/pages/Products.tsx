@@ -27,7 +27,7 @@ const Products = () => {
       <div key={product._id} className="group relative">
         <Link to={`/${product.slug}`}>
           <img
-            src={product.image}
+            src={product.image[0].secureURL}
             alt="Front of men&#039;s Basic Tee in black."
             className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
           />
