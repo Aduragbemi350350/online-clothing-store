@@ -1,7 +1,10 @@
 import Product from "../models/Product.js"
 import errorHandler from "../utilities/errorHandler.js"
 import fileRenamer from "../utilities/fileRenamer.js"
-import { cloudinaryUpload } from '../cloudinary/cloudinary.js'
+import { cloudinaryDeleteImage, cloudinaryDeleteImages, cloudinaryUpdateImage, cloudinaryUploadImages } from '../cloudinary/cloudinary.js'
+import fs from 'fs'
+import fileDeleter from "../utilities/fileDeleter.js"
+import slugify from 'slugify'
 
 //fetch all products
 export const getProducts = async (req, res) => {
@@ -29,38 +32,52 @@ export const getProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
     try {
         const user = req.user
-        const file = req.file
+        const files = req.files
 
         const { name, price, description, category } = req.body
 
         //validate arguments
-        if (!file || !description || !name || !price || !category || !user) {
+        if (!files || !description || !name || !price || !category || !user) {
             console.log({ "Create product": "Product images or product details aren't available" })
             res.status(400).json({ "Create product": "Product images or product details aren't available" })
             return
         }
         console.log({
             mess: "File object",
-            file
+            files
         })
 
 
         //upload to cloudinary
-        const response = cloudinaryUpload(file.path, "image", res)
+        const images = cloudinaryUploadImages(files)
 
-        //get image properties from cloudinary response
-        const imageProp = {
-            publicKey: response.public_key,
-            secureURL: response.secure_url,
-            resoureType: response.resoure_type,
-            folder: response.asset_folder,
-            originalFilename: response.original_filename
+        if (!images) {
+            console.log({
+                mess: "Images wasn't uploaded to cloudinary",
+                images
+            })
+            return res.status(400).json({ mess: "Images wasn't uploaded to cloudinary" })
         }
+        //get only necessary image properties from cloudinary
+        const newImages = images.map((image) => {
+            return {
+                publicKey: image.public_id,
+                secureURL: image.secure_url,
+                resourceType: image.resource_type,
+                folder: image.asset_folder,
+                originalFilename: image.original_filename
+            }
+        })
         console.log({
-            mess: "save image to cloudinary",
-            imageProp
+            mess: "Extracting necessary properties from images coming from cloudinary",
+            newImages
         })
 
+        //delete file (image) from server once upload to cloudinary becomes succesful
+        const deletedFiles = files.map((file) => fileDeleter(file.path))
+        console.log({
+            mess: "Delete files after saving to cloudinary"
+        })
 
         //create a product
         const product = {
@@ -68,27 +85,41 @@ export const createProduct = async (req, res) => {
             price,
             description,
             category,
-            image: imageProp,
+            images: newImages,
             slug: slugify(name),
             createdBy: user._id
         }
+        console.log({
+            mess: "Product",
+            product
+        })
 
         //create product in DB
         const createdProduct = await Product.create(product)
 
         if (!createdProduct) {
-            console.log({ "Create product": "Product wasn't created in the DB" })
-            res.status(400).json({ "Create product": "Product wasn't created in the DB" })
+            console.log({
+                mess: "product wasn't created",
+                createdProduct
+            })
+            res.status(400).json({
+                mess: "product wasn't created",
+                createdProduct
+            })
             return
         }
 
-        console.log({ "This product is created": createdProduct })
-        res.json({ "This product is created": createdProduct })
+        //show outputs
+        console.log({
+            mess: "Product was created",
+            createdProduct
+        })
+        res.status(200).json({ createdProduct })
     } catch (error) {
         const err = errorHandler(error)
         console.log({
             mess: "Create product error",
-            errMess: err
+            errMess: error
         })
         res.status(err.status).json(err)
     }
@@ -120,23 +151,110 @@ export const getProduct = async (req, res) => {
 //update product
 export const updateProduct = async (req, res) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug })
-        const productId = product._id
-        const updateProduct = {
-            name: req.body.name,
-            description: req.body.description,
-            price: req.body.price,
-            slug: slugify(req.body.name, { lower: true }),
-            category: req.body.category,
-            createdBy: req.body?.createdBy || product.createdBy
+        //get update from user
+        const productUpdate = req.body
+        const files = req.files
+
+        //confirm if there's update from the user
+        if (!productUpdate) {
+            console.log({
+                mess: "User didn't update product"
+            })
+            res.status(400).json({ mess: "User didn't update product" })
         }
-        console.log(updateProduct)
 
-        const updatedProduct = await Product.findByIdAndUpdate(productId, updateProduct, { new: true })
+        //confirm if product exist
+        const product = await Product.findOne(productUpdate._id)
+        if (!product) {
+            console.log({
+                mess: "The product user wants to update doesn't exist in the DB"
+            })
+            res.status(400).json({ mess: "The product user wants to update doesn't exist in the DB" })
+        }
 
-        console.log(updatedProduct)
-        return res.json(updatedProduct)
+        //confirm if image was updated
+        let updatedImages
+        if (files) {
+            //confirm if product itself has images
+            if (product.images) {
+                //delete previous images in cloudinary
+                const images = product.images
+                const deletedImages = cloudinaryDeleteImages(images)
+                console.log({
+                    mess: "Delete old images in cloudinary",
+                    deletedImages
+                })
+            }
 
+
+            //create new image in cloudinary: Update
+            updatedImages = cloudinaryUploadImages(files)
+        }
+        //get only necessary image properties from cloudinary
+        const newImages = updatedImages.map((image) => {
+            return {
+                publicKey: image.public_id,
+                secureURL: image.secure_url,
+                resourceType: image.resource_type,
+                folder: image.asset_folder,
+                originalFilename: image.original_filename
+            }
+        })
+        console.log({
+            mess: "Images with necessary properties",
+            newImages
+        })
+        if (!newImages) {
+            return res.status(500).json({
+                mess: "An error occured while getting updated images",
+            })
+        }
+
+        //updated product
+        const updateProduct = {
+            name: productUpdate?.name || product.name,
+            description: productUpdate?.description || product.description,
+            price: productUpdate?.price || product.price,
+            slug: slugify(productUpdate?.slug, { lower: true }) || product.slug,
+            category: productUpdate?.category || product.category,
+            images: newImages || product.images
+        }
+        console.log({
+            mess: "Updated product details",
+            updateProduct
+        })
+
+        //check if the product update details are available
+        if (!updateProduct) {
+            console.log({
+                mess: "Product wasn't updated!"
+            })
+            res.status(500).json({
+                mess: "Product wasn't updated!"
+            })
+            return
+        }
+
+        //update product in the DB
+        const updatedProduct = await Product.findByIdAndUpdate(product._id, updateProduct, { new: true })
+
+        //check if update was successful
+        if (!updatedProduct) {
+            console.log({
+                mess: "Product wasn't updated in the DB successfully!"
+            })
+            res.status(500).json({
+                mess: "Product wasn't updated in the DB successfully!"
+            })
+            return
+        }
+
+        //show final update result
+        console.log({
+            mess: "Product was updated in the DB successfully!",
+            updatedProduct
+        })
+        return res.status(200).json(updatedProduct)
     } catch (error) {
         const err = errorHandler(error)
         console.log({
@@ -150,15 +268,50 @@ export const updateProduct = async (req, res) => {
 //delete product
 export const deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug })
-        const productId = product._id
+        //verify user
 
-        const deletedProduct = await Product.findByIdAndDelete(productId)
-        // delete product review
-        const productReviews = await Review.deleteMany({ product: productId })
+        //get product and delete
+        const product = await Product.findById(req.params.id)
 
-        console.log(deletedProduct)
-        return res.json(deletedProduct)
+        //check if there's product
+        if (!product) {
+            console.log({
+                mess: "Product isn't in the DB"
+            })
+            res.status(400).json({
+                mess: "Product isn't in the DB"
+            })
+        }
+
+        //check for product images
+        if(product.images){
+            //delete images in cloudinary
+            const deletionResponse = cloudinaryDeleteImages(product.images)
+            console.log({
+                mess: "Images were deleted from cloudinary",
+                deletionResponse
+            })
+        }
+
+        //delete product from DB
+        const deletionResponse = await Product.findByIdAndDelete(req.params.id)
+
+        //check if product is deleted
+        if (!deletionResponse) {
+            console.log({
+                mess: "Product wasn't deleted!"
+            })
+            res.status(500).json({
+                mess: "Product wasn't deleted!"
+            })
+        }
+
+        //show result
+        console.log({
+            mess: "Product deleted",
+            deletionResponse
+        })
+        return res.status(200).json(deletionResponse)
     } catch (error) {
         const err = errorHandler(error)
         console.log({
