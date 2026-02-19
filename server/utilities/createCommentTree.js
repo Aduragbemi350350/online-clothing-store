@@ -1,6 +1,6 @@
 import dateToISO from "./dateToISO.js"
 
-export default function createCommentTree(comments) {
+export default function createCommentTree(comments, productId) {
 
     const modifiedComments = []
 
@@ -41,8 +41,7 @@ export default function createCommentTree(comments) {
     comments.map((comment) => {
         //check if comment is a parent
         if (comment.parent === null) {
-            const commentId = comment._id
-            rootComment.push(commentsMap[commentId])
+            rootComment.push(commentsMap[comment._id])
             return
         }
 
@@ -51,6 +50,19 @@ export default function createCommentTree(comments) {
         parent.children.push(comment)
     })
 
-    //send comment tree
-    return  rootComment
+    //get comments for product
+    const productComments = rootComment.filter((comment)=> {
+        if(comment.product === productId){
+            return comment
+        }
+    })
+
+    //see and return result
+    console.log({
+        mess: "Comments for product fetched",
+        productComments,
+        rootComment,
+        productId
+    })
+    return  productComments
 }
