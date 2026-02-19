@@ -16,7 +16,7 @@ router
 
     .get('/:slug', getProduct)
 
-    .put('/:slug', updateProduct)
+    .put('/:id', multerUpload.array("images"),updateProduct)
 
     .delete('/:id', deleteProduct)
 
