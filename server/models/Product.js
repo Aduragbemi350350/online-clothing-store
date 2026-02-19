@@ -4,7 +4,7 @@ import  Review  from "./Review.js";
 
 //image schema
 const imageSchema = mongoose.Schema({
-    publicKey: String,
+    publicId: String,
     secureURL: String,
     resourceType: String,
     folder: String,
