@@ -211,7 +211,7 @@ const UpdateProduct = () => {
               type="submit"
               className="bg-primary-700 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 mt-4 inline-flex items-center rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white focus:ring-4 sm:mt-6"
             >
-              Add product
+              Update product
             </button>
           </form>
         </div>
