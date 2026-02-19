@@ -33,8 +33,24 @@ export const createProduct = async (req, res) => {
     try {
         const user = req.user
         const files = req.files
+        const { name, description, category } = req.body
+        const price = Number(req.body.price)
+        //prevent duplicate
+        const existingProduct = await Product.findOne({ ...req.body, price })
+        if (existingProduct) {
+            //delete sent images
+            const deletionResponse = files.map((file) => fileDeleter(file.path))
 
-        const { name, price, description, category } = req.body
+            //show result
+            console.log({
+                mess: "This product already exist in the DB",
+                deletionResponse
+            })
+            return res.status(409).json({
+                mess: "This product already exist in the DB"
+            })
+        }
+
 
         //validate arguments
         if (!files.length > 0 || !description || !name || !price || !category || !user) {
@@ -158,7 +174,7 @@ export const updateProduct = async (req, res) => {
 
         console.log({
             mess: "Update products",
-            body: productUpdate ,
+            body: productUpdate,
             files
         })
 
@@ -231,7 +247,7 @@ export const updateProduct = async (req, res) => {
             price: productUpdate?.price || product.price,
             slug: slugify(productUpdate?.name, { lower: true }) || product.slug,
             category: productUpdate?.category || product.category,
-            images: newImages || product.images
+            images: newImages.length > 0 ? newImages : product.images
         }
         console.log({
             mess: "Updated product details",
@@ -284,11 +300,11 @@ export const deleteProduct = async (req, res) => {
     try {
         //verify user
         const user = req.user
-        if(!user){
+        if (!user) {
             console.log({
                 mess: "This isn't a verified user",
             })
-            return res.status(400).json({mess: "This isn't a verified user"})
+            return res.status(400).json({ mess: "This isn't a verified user" })
         }
 
         //get product and delete
@@ -305,7 +321,7 @@ export const deleteProduct = async (req, res) => {
         }
 
         //check for product images
-        if(product.images){
+        if (product.images) {
             //delete images in cloudinary
             const deletionResponse = await cloudinaryDeleteImages(product.images)
             console.log({
@@ -316,6 +332,47 @@ export const deleteProduct = async (req, res) => {
 
         //delete product from DB
         const deletionResponse = await Product.findByIdAndDelete(req.params.id)
+
+        //check if product is deleted
+        if (!deletionResponse) {
+            console.log({
+                mess: "Product wasn't deleted!"
+            })
+            res.status(500).json({
+                mess: "Product wasn't deleted!"
+            })
+        }
+
+        //show result
+        console.log({
+            mess: "Product deleted",
+            deletionResponse
+        })
+        return res.status(200).json(deletionResponse)
+    } catch (error) {
+        const err = errorHandler(error)
+        console.log({
+            mess: "Delete product error",
+            error
+        })
+        res.status(err.status).json(err)
+    }
+}
+
+//delete product
+export const deleteProducts = async (req, res) => {
+    try {
+        //verify user
+        const user = req.user
+        if (!user) {
+            console.log({
+                mess: "This isn't a verified user",
+            })
+            return res.status(400).json({ mess: "This isn't a verified user" })
+        }
+
+        //delete product from DB
+        const deletionResponse = await Product.deleteAll()
 
         //check if product is deleted
         if (!deletionResponse) {
