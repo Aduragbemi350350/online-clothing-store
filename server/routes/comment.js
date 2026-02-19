@@ -1,10 +1,12 @@
 import express from 'express'
 const commentRouter = express.Router()
-import { deleteComments, getComments, postComment, reactToComment } from '../controllers/comment.js'
+import { deleteComments, getComments, getProductComments, postComment, reactToComment } from '../controllers/comment.js'
 import {authMiddleWare} from '../auth/authMiddleware.js'
 
 commentRouter
     .get("/", getComments)
+
+    .get("/:productId", getProductComments)
 
     .post("/", authMiddleWare, postComment)
 
