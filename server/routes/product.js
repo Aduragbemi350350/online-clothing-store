@@ -18,7 +18,7 @@ router
 
     .put('/:id', multerUpload.array("images"),updateProduct)
 
-    .delete('/:id', deleteProduct)
+    .delete('/:id', authMiddleWare, deleteProduct)
 
 
 export default router
