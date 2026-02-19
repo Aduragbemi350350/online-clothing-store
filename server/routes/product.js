@@ -3,7 +3,7 @@ const router = express.Router()
 
 
 //LOCAL IMPORT
-import { createProduct, deleteProduct, getProduct, getProducts, updateProduct } from '../controllers/products.js'
+import { createProduct, deleteProduct, deleteProducts, getProduct, getProducts, updateProduct } from '../controllers/products.js'
 import { multerUpload } from '../upload/multer/multer.js'
 import { authMiddleWare, getUser } from '../auth/authMiddleware.js'
 
@@ -19,6 +19,8 @@ router
     .put('/:id', multerUpload.array("images"),updateProduct)
 
     .delete('/:id', authMiddleWare, deleteProduct)
+
+    .delete('/', authMiddleWare, deleteProducts)
 
 
 export default router
