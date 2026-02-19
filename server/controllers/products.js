@@ -283,6 +283,13 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
     try {
         //verify user
+        const user = req.user
+        if(!user){
+            console.log({
+                mess: "This isn't a verified user",
+            })
+            return res.status(400).json({mess: "This isn't a verified user"})
+        }
 
         //get product and delete
         const product = await Product.findById(req.params.id)
@@ -300,7 +307,7 @@ export const deleteProduct = async (req, res) => {
         //check for product images
         if(product.images){
             //delete images in cloudinary
-            const deletionResponse = cloudinaryDeleteImages(product.images)
+            const deletionResponse = await cloudinaryDeleteImages(product.images)
             console.log({
                 mess: "Images were deleted from cloudinary",
                 deletionResponse
@@ -330,7 +337,7 @@ export const deleteProduct = async (req, res) => {
         const err = errorHandler(error)
         console.log({
             mess: "Delete product error",
-            errMess: err
+            error
         })
         res.status(err.status).json(err)
     }
