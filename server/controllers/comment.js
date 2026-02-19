@@ -5,14 +5,69 @@ import Comment from "../models/Comment.js"
 //get comments
 export const getComments = async (req, res) => {
     try {
+        //fetch comments
         const comments = await Comment.find()
 
+        //sort comments
         comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
-        const commentTree = createCommentTree(comments)
+        //show result
+        console.log({
+            mess: "Fetch comments from DB",
+            comments
+        })
+        res.status(200).json(comments)
+    } catch (error) {
+        const err = errorHandler(error)
+        console.log({
+            mess: "Get comments error",
+            errMess: err
+        })
+        res.status(err.status).json(err)
+    }
+}
 
-        res.status(200).json(commentTree)
-        console.log("Comment tree: ", commentTree)
+export const getProductComments = async (req, res) => {
+    try {
+        //get comments
+        const comments = await Comment.find()
+        const productId = req.params.productId
+        console.log({
+            mess: "Product ID",
+            id: req.params.productId
+        })
+
+        if (!productId) {
+            //show result
+            console.log({
+                mess: "There's no product ID",
+            })
+            res.status(400).json({
+                mess: "There's no product ID",
+            })
+        }
+
+        if (!comments) {
+            //show result
+            console.log({
+                mess: "Comment wasn't fetched from DB",
+            })
+            res.status(400).json({
+                mess: "Comment wasn't fetched from DB",
+            })
+        }
+
+        //sort comments based in descending order of the array.
+        comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+        //get comments for product
+        const productComments = createCommentTree(comments, req.params.productId)
+
+        console.log({
+            mess: "Comments for product fetched",
+            productComments
+        })
+        res.status(200).json(productComments)
     } catch (error) {
         const err = errorHandler(error)
         console.log({
