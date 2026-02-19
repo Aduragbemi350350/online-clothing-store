@@ -37,7 +37,7 @@ export const createProduct = async (req, res) => {
         const { name, price, description, category } = req.body
 
         //validate arguments
-        if (!files || !description || !name || !price || !category || !user) {
+        if (!files.length > 0 || !description || !name || !price || !category || !user) {
             console.log({ "Create product": "Product images or product details aren't available" })
             res.status(400).json({ "Create product": "Product images or product details aren't available" })
             return
@@ -49,9 +49,8 @@ export const createProduct = async (req, res) => {
 
 
         //upload to cloudinary
-        const images = cloudinaryUploadImages(files)
-
-        if (!images) {
+        const images = await cloudinaryUploadImages(files)
+        if (!(images.length > 0)) {
             console.log({
                 mess: "Images wasn't uploaded to cloudinary",
                 images
@@ -61,7 +60,7 @@ export const createProduct = async (req, res) => {
         //get only necessary image properties from cloudinary
         const newImages = images.map((image) => {
             return {
-                publicKey: image.public_id,
+                publicId: image.public_id,
                 secureURL: image.secure_url,
                 resourceType: image.resource_type,
                 folder: image.asset_folder,
@@ -74,9 +73,10 @@ export const createProduct = async (req, res) => {
         })
 
         //delete file (image) from server once upload to cloudinary becomes succesful
-        const deletedFiles = files.map((file) => fileDeleter(file.path))
+        const deletedImages = files.map((file) => fileDeleter(file.path))
         console.log({
-            mess: "Delete files after saving to cloudinary"
+            mess: "Delete files after saving to cloudinary",
+            deletedImages
         })
 
         //create a product
@@ -152,19 +152,26 @@ export const getProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         //get update from user
+        const productId = req.params.id
         const productUpdate = req.body
         const files = req.files
 
-        //confirm if there's update from the user
-        if (!productUpdate) {
+        console.log({
+            mess: "Update products",
+            body: productUpdate ,
+            files
+        })
+
+        // confirm if there's update from the user
+        if (!productUpdate && !files) {
             console.log({
                 mess: "User didn't update product"
             })
             res.status(400).json({ mess: "User didn't update product" })
         }
 
-        //confirm if product exist
-        const product = await Product.findOne(productUpdate._id)
+        // confirm if product exist
+        const product = await Product.findById(productId)
         if (!product) {
             console.log({
                 mess: "The product user wants to update doesn't exist in the DB"
@@ -172,14 +179,14 @@ export const updateProduct = async (req, res) => {
             res.status(400).json({ mess: "The product user wants to update doesn't exist in the DB" })
         }
 
-        //confirm if image was updated
+        // confirm if image was updated
         let updatedImages
         if (files) {
             //confirm if product itself has images
             if (product.images) {
                 //delete previous images in cloudinary
                 const images = product.images
-                const deletedImages = cloudinaryDeleteImages(images)
+                const deletedImages = await cloudinaryDeleteImages(images)
                 console.log({
                     mess: "Delete old images in cloudinary",
                     deletedImages
@@ -188,12 +195,17 @@ export const updateProduct = async (req, res) => {
 
 
             //create new image in cloudinary: Update
-            updatedImages = cloudinaryUploadImages(files)
+            updatedImages = await cloudinaryUploadImages(files)
+            console.log({
+                mess: "Uploading updated images to cloudinary",
+                updatedImages
+            })
         }
+
         //get only necessary image properties from cloudinary
         const newImages = updatedImages.map((image) => {
             return {
-                publicKey: image.public_id,
+                publicId: image.public_id,
                 secureURL: image.secure_url,
                 resourceType: image.resource_type,
                 folder: image.asset_folder,
@@ -204,6 +216,8 @@ export const updateProduct = async (req, res) => {
             mess: "Images with necessary properties",
             newImages
         })
+
+        //check if images with the necessary properties are available
         if (!newImages) {
             return res.status(500).json({
                 mess: "An error occured while getting updated images",
@@ -215,7 +229,7 @@ export const updateProduct = async (req, res) => {
             name: productUpdate?.name || product.name,
             description: productUpdate?.description || product.description,
             price: productUpdate?.price || product.price,
-            slug: slugify(productUpdate?.slug, { lower: true }) || product.slug,
+            slug: slugify(productUpdate?.name, { lower: true }) || product.slug,
             category: productUpdate?.category || product.category,
             images: newImages || product.images
         }
@@ -259,7 +273,7 @@ export const updateProduct = async (req, res) => {
         const err = errorHandler(error)
         console.log({
             mess: "Update product error",
-            errMess: err
+            error
         })
         res.status(err.status).json(err)
     }
