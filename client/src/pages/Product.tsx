@@ -65,6 +65,30 @@ const Product = () => {
     sendComment(comment);
   };
 
+  //handle product delete
+  const handleDeleteProduct = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      //delete product
+      const response = axios.delete(
+        `http://localhost:3000/api/products/${product?._id}`,
+        { withCredentials: true },
+      );
+
+      //show result
+      console.log({
+        mess: "Deleting product",
+        response,
+      });
+    } catch (error) {
+      console.log({
+        mess: "An error occured while deleting product",
+        error,
+      });
+    }
+  };
+
   //RETURNS
   //RETURNS
   //RETURNS
@@ -283,12 +307,20 @@ const Product = () => {
                   </svg>
                 </button>
               </div>
-              
-              {/* update */}
+
+              {/* update  and delete */}
               <div>
                 <Link to="/product/update">
-                  <button className="bg-blue-600 p-2 text-white rounded-md mt-4">Update Product</button>
+                  <button className="mt-4 rounded-md bg-blue-600 p-2 text-white">
+                    Update Product
+                  </button>
                 </Link>
+
+                <form onSubmit={handleDeleteProduct}>
+                  <button type="submit" className="mt-4 rounded-md bg-red-600 p-2 text-white">
+                    Delete Product
+                  </button>
+                </form>
               </div>
             </div>
           </div>
