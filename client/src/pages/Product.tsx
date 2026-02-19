@@ -23,8 +23,11 @@ const Product = () => {
   //Use effect
   useEffect(() => {
     dispatch(fetchProductThunk(slug!));
-    dispatch(fetchCommentsThunk());
   }, [dispatch]);
+
+  if (product) {
+    dispatch(fetchCommentsThunk(product?._id!));
+  }
 
   //send comment
   async function sendComment(comment: any) {
@@ -317,7 +320,10 @@ const Product = () => {
                 </Link>
 
                 <form onSubmit={handleDeleteProduct}>
-                  <button type="submit" className="mt-4 rounded-md bg-red-600 p-2 text-white">
+                  <button
+                    type="submit"
+                    className="mt-4 rounded-md bg-red-600 p-2 text-white"
+                  >
                     Delete Product
                   </button>
                 </form>
