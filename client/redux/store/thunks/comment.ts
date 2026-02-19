@@ -4,11 +4,11 @@ import axios from "axios";
 
 export const fetchCommentsThunk = createAsyncThunk<
   Comment[],
-  void,
+  string,
   { rejectValue: any }
->("comments/fetchComments", async (_, thunkAPI) => {
+>("comments/fetchComments", async ( productId, thunkAPI) => {
   try {
-    const response = await axios.get("http://localhost:3000/api/comments/", {
+    const response = await axios.get(`http://localhost:3000/api/comments/${productId}`, {
       withCredentials: true,
     });
 
