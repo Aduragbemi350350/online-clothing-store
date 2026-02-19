@@ -12,9 +12,8 @@ const Navbar = () => {
 
   console.log({
     name: "User logged In",
-    currentUser: user
-  })
-  
+    currentUser: user,
+  });
 
   //handle signout
   const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -36,12 +35,11 @@ const Navbar = () => {
     }
   };
 
-
-  useEffect(()=>{
+  useEffect(() => {
     //dispatch fetch user
-    dispatch(fetchUserThunk())
-    console.log("Navbar dispatched fetch user thunk!")
-  }, [dispatch])
+    dispatch(fetchUserThunk());
+    console.log("Navbar dispatched fetch user thunk!");
+  }, [dispatch]);
   return (
     <>
       <nav className="fixed start-0 top-0 z-20 w-full border-b border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-900">
@@ -60,7 +58,7 @@ const Navbar = () => {
             </span>
           </Link>
           <div className="flex gap-2 space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
-            { user?._id ? (
+            {user?._id ? (
               <button
                 onClick={handleSignout}
                 type="button"
@@ -139,6 +137,15 @@ const Navbar = () => {
                   className="block rounded-sm px-3 py-2 text-gray-900 hover:bg-gray-100 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
                 >
                   Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/product/create"
+                  className="block rounded-sm px-3 py-2 md:bg-transparent md:p-0"
+                  aria-current="page"
+                >
+                  Create Product
                 </Link>
               </li>
             </ul>
