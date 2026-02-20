@@ -32,7 +32,7 @@ const errorHandler = (error) => {
 
     return {
         name: "Unknown",
-        message: "An unexpected error occurred!",
+        message: "An unexpected error occurred! Try again later",
         status: 500
     }
 }
