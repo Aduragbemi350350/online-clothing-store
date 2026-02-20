@@ -1,23 +1,31 @@
 import User from "../models/User.js"
-import bcrypt from 'bcrypt'
-import { json } from "express"
 import jwt from 'jsonwebtoken'
+import errorHandler from '../utilities/errorHandler.js'
+
+
+//user middleware
 export async function authMiddleWare(req, res, next) {
     try {
+        //get token from client header
         const token = req.cookies.userToken
 
-        console.log({ "Token from the client:": token })
+        //show token
+        console.log({ mess: "Get token from client header", token })
 
+        //check token
         if (!token) {
-            console.log({ mess: "Login" })
-            return res.status(401).json({ mess: "Login" })
+            //show result
+            console.log({ mess: "There's no token!"})
+            return res.status(401).json({ mess: "Please, login to continue!" })
         }
 
+        //verify token
         const userVerified = jwt.verify(token, process.env.SECRET_KEY)
 
+        //check if token in correct/valid
         if (!userVerified) {
-            console.log({ mess: "Invalid User!" })
-            res.status(401).json({ mess: "Invalid User!" })
+            console.log({ mess: "Token verification failed. User isn't valid!" })
+            res.status(401).json({ mess: "Invalid User! Try to login again." })
             return
         } else {
             const user = await User.findById(userVerified.id)
@@ -25,8 +33,9 @@ export async function authMiddleWare(req, res, next) {
             next()
         }
     } catch (error) {
-        console.log({ mess: error.message })
-        res.status(500).json({ mess: error.message })
+        console.log({ mess: "An error occured while verifying user!" })
+        const err = errorHandler(error)
+        res.status(500).json({ mess: err })
     }
 }
 
@@ -35,7 +44,7 @@ export const getUser = async (req, res, next) => {
         const token = req.cookies.userToken
         const userVerified = jwt.verify(token, process.env.SECRET_KEY)
         if (!userVerified) {
-            console.log({"Getting user": "User isn't signed in"})
+            console.log({ "Getting user": "User isn't signed in" })
             next()
         }
         const user = await User.findById(userVerified.id)
@@ -47,14 +56,16 @@ export const getUser = async (req, res, next) => {
     }
 }
 
-
+//user utilities
 export const generateToken = (userId) => {
     const token = jwt.sign({ id: userId }, process.env.SECRET_KEY, { expiresIn: "1d" })
     console.log({ "Generated token": token })
 
     if (!token) {
-        console.log({ "Generate token": "There's no token generated" })
-        res.status(400).json({ "Generate token": "There's no token generated" })
+        console.log({
+            mess: "Token wasn't generated!"
+        })
+        throw new Error("Token wasn't generated!")
     }
 
     return token
