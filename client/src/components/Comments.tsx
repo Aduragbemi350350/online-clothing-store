@@ -31,7 +31,7 @@ const Comments = ({ product }: { product: Product }) => {
         <CommentArticle
           key={comment._id}
           comment={comment}
-          product={product._id}
+          productId={product._id}
         />
       )) : 
       <div>

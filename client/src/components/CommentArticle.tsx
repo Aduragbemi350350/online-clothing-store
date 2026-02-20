@@ -7,10 +7,10 @@ import { AppDispatch } from "../../redux/store/store";
 
 const CommentArticle = ({
   comment,
-  product,
+  productId,
 }: {
   comment: Comment;
-  product: string;
+  productId: string;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   //state
@@ -30,7 +30,7 @@ const CommentArticle = ({
       });
       console.log("Reacted to comment successfully to:", userReaction.comment);
 
-      dispatch(fetchCommentsThunk());
+      dispatch(fetchCommentsThunk(productId));
     } catch (error: any) {
       console.log({ message: error.message });
     }
@@ -44,13 +44,13 @@ const CommentArticle = ({
       });
       console.log("Comment successfully made!");
 
-      dispatch(fetchCommentsThunk());
+      dispatch(fetchCommentsThunk(productId));
     } catch (error: any) {
       console.log({ message: error.message });
     }
   }
 
-  //reply handler
+  //comment or reply handler
   const replyHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const reply = e.currentTarget.elements.namedItem(
@@ -59,7 +59,7 @@ const CommentArticle = ({
 
     //comment or reply made by the user
     const userComment = {
-      product,
+      productId,
       parent: comment._id,
       text: reply.value,
     };
@@ -71,7 +71,7 @@ const CommentArticle = ({
     //change of the comment input field
     setCommentReply((prev) => !prev);
 
-    dispatch(fetchCommentsThunk());
+    dispatch(fetchCommentsThunk(productId));
   };
 
   //reaction hander
