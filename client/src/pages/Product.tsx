@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store/store";
+import { toast, ToastContainer } from "react-toastify";
 
 //local import
 import Comments from "../components/Comments";
@@ -12,6 +13,9 @@ import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 import { ErrorPage } from "./ErrorPages";
 
 const Product = () => {
+  //get user
+  // const { user } = useSelector((state: RootState) => state.user);
+
   const dispatch = useDispatch<AppDispatch>();
   const { slug } = useParams<string>();
 
@@ -32,20 +36,30 @@ const Product = () => {
   //send comment
   async function sendComment(comment: any) {
     try {
-      const res = await axios.post(
+      const res: any = await axios.post(
         "http://localhost:3000/api/comments/",
         comment,
         { withCredentials: true },
       );
+
+      toast.success(res?.data.message);
       console.log({ response: res });
     } catch (error: any) {
-      console.log({ mess: error.message });
+      toast.error(error.response.data.mess);
+      console.log({ mess: error });
     }
   }
 
   //make comment
   const makeCommentHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    //check if user exist before making comment
+    // if(user){
+    //   alert("User has to signin before making a comment")
+    //   return
+    // }
+
     //get the comment
     const commentTextArea = e.currentTarget.elements.namedItem(
       "comment",
@@ -147,14 +161,17 @@ const Product = () => {
   //Product
   return (
     <Layout>
+      <ToastContainer />
       <section className="body-font overflow-hidden text-gray-600">
         <div className="container mx-auto px-5 py-24">
           <div className="mx-auto flex flex-wrap lg:w-4/5">
-            <img
-              alt="ecommerce"
-              className="h-64 w-full rounded object-cover object-center lg:h-auto lg:w-1/2"
-              src={product?.images[0]?.secureURL}
-            />
+            <div>
+              <img
+                alt="ecommerce"
+                className="h-64 w-full rounded object-cover object-center lg:h-auto lg:w-1/2"
+                src={product?.images[0]?.secureURL}
+              />
+            </div>
             <div className="mt-6 w-full lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10">
               <h2 className="title-font text-sm tracking-widest text-gray-500">
                 BRAND NAME
@@ -312,7 +329,7 @@ const Product = () => {
               </div>
 
               {/* update  and delete */}
-              <div>
+              <div className="flex gap-6">
                 <Link to="/product/update">
                   <button className="mt-4 rounded-md bg-blue-600 p-2 text-white">
                     Update Product
