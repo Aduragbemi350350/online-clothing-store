@@ -1,6 +1,6 @@
 import express from 'express'
 const commentRouter = express.Router()
-import { deleteComments, getComments, getProductComments, postComment, reactToComment } from '../controllers/comment.js'
+import { deleteComment, deleteComments, getComments, getProductComments, postComment, reactToComment } from '../controllers/comment.js'
 import {authMiddleWare} from '../auth/authMiddleware.js'
 
 commentRouter
@@ -12,6 +12,8 @@ commentRouter
 
     .post("/reaction",authMiddleWare, reactToComment)
 
-    .delete("/", deleteComments)
+    .delete("/", authMiddleWare, deleteComments)
+
+    .delete("/:id", authMiddleWare, deleteComment)
 export default commentRouter
 
