@@ -1,6 +1,7 @@
 import createCommentTree from "../utilities/createCommentTree.js"
 import { makeReaction, reverseReaction } from "../utilities/userReactions.js"
 import Comment from "../models/Comment.js"
+import errorHandler from '../utilities/errorHandler.js'
 
 //get comments
 export const getComments = async (req, res) => {
@@ -83,9 +84,10 @@ export const postComment = async (req, res) => {
     try {
         //get user details from middleware
         const user = req.user
+        const {text, parent} = req.body
 
         // check if user and comment details exist
-        if (!req.body || !user) {
+        if (!text || !parent || !user) {
             console.log({ noContent: "There's no user or content available" })
             res.status(400).json({ noContent: "There's no user or content available" })
         }
@@ -118,6 +120,7 @@ export const reactToComment = async (req, res) => {
     try {
         const { comment: commentId, reaction: reactionType } = req.body
 
+        //get user
         const user = req.user
 
         //check for body
