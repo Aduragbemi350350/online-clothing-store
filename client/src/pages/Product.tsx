@@ -34,7 +34,7 @@ const Product = () => {
   //send comment
   async function sendComment(comment: any) {
     try {
-      const res: any = await axios.post(
+      const res = await axios.post(
         "http://localhost:3000/api/comments/",
         comment,
         { withCredentials: true },
@@ -50,7 +50,8 @@ const Product = () => {
         res,
       });
     } catch (error: any) {
-      toast.error(error.response.data.mess);
+      const errMess = error.response.data.mess || error.message
+      toast.error(errMess);
       console.log({
         mess: "An error occured while making a comment on product!",
         error,
