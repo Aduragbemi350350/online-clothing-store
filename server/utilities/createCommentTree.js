@@ -30,7 +30,7 @@ export default function createCommentTree(comments, productId) {
     })
 
     //confirm if there is modifiedComments
-    if (!modifiedComments){
+    if (!modifiedComments) {
         //show result
         console.log({
             mess: "Comment cannot be refactor to use custom date"
@@ -56,7 +56,9 @@ export default function createCommentTree(comments, productId) {
 
         //else, comment is a child hence should be added to its parent
         const parent = commentsMap[comment.parent]
-        parent.children.push(comment)
+        if (parent) {
+            parent.children.push(comment)
+        }
     })
 
     //get comments for product
