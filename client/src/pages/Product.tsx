@@ -13,9 +13,6 @@ import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 import { ErrorPage } from "./ErrorPages";
 
 const Product = () => {
-  //get user
-  // const { user } = useSelector((state: RootState) => state.user);
-
   const dispatch = useDispatch<AppDispatch>();
   const { slug } = useParams<string>();
 
@@ -29,6 +26,7 @@ const Product = () => {
     dispatch(fetchProductThunk(slug!));
   }, [dispatch]);
 
+  //fetch comments of the product
   if (product) {
     dispatch(fetchCommentsThunk(product?._id!));
   }
@@ -42,11 +40,21 @@ const Product = () => {
         { withCredentials: true },
       );
 
-      toast.success(res?.data.message);
-      console.log({ response: res });
+      //fetch comments for the product to update the UI
+      dispatch(fetchCommentsThunk(product?._id!));
+
+      //show result
+      toast.success("Comment successfully made!");
+      console.log({
+        mess: "Comment on product made successfully",
+        res,
+      });
     } catch (error: any) {
       toast.error(error.response.data.mess);
-      console.log({ mess: error });
+      console.log({
+        mess: "An error occured while making a comment on product!",
+        error,
+      });
     }
   }
 
