@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import axios from "axios";
-import { loginUser, logoutuser } from "../../redux/store/slices/user";
+import { logoutuser } from "../../redux/store/slices/user";
 import fetchUserThunk from "../../redux/store/thunks/user";
 
 const Navbar = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
-  console.log({
-    name: "User logged In",
-    currentUser: user,
-  });
+  // console.log({
+  //   name: "User logged In",
+  //   currentUser: user,
+  // });
 
   //handle signout
   const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,7 +38,9 @@ const Navbar = () => {
   useEffect(() => {
     //dispatch fetch user
     dispatch(fetchUserThunk());
-    console.log("Navbar dispatched fetch user thunk!");
+
+    //show result
+    // console.log("Navbar dispatched fetch user thunk!");
   }, [dispatch]);
   return (
     <>
