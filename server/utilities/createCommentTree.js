@@ -1,11 +1,10 @@
+import mongoose from "mongoose"
 import dateToISO from "./dateToISO.js"
 
 export default function createCommentTree(comments, productId) {
 
-    const modifiedComments = []
-
-    comments.map((comment) => {
-    
+    //transform or modify comments so as to make use the custom formatted date
+    const modifiedComments = comments.map((comment) => {
         //convert the comment date
         const createdAt = dateToISO(comment.createdAt)
         const updatedAt = dateToISO(comment.updatedAt)
@@ -22,12 +21,22 @@ export default function createCommentTree(comments, productId) {
             updatedAt
         }
 
-        //push new comment to modified comment
-        modifiedComments.push(newComment)
+        return newComment
+    })
+
+    console.log({
+        mess: "Show modified comments",
+        modifiedComments
     })
 
     //confirm if there is modifiedComments
-    if (!modifiedComments) return { noContent: "Comments not found!" }
+    if (!modifiedComments){
+        //show result
+        console.log({
+            mess: "Comment cannot be refactor to use custom date"
+        })
+        throw new Error("Comment cannot be refactor to use custom date")
+    }
 
     //create comment map
     const commentsMap = {}
@@ -38,7 +47,7 @@ export default function createCommentTree(comments, productId) {
 
     //create rootComments
     const rootComment = []
-    comments.map((comment) => {
+    modifiedComments.map((comment) => {
         //check if comment is a parent
         if (comment.parent === null) {
             rootComment.push(commentsMap[comment._id])
@@ -51,18 +60,14 @@ export default function createCommentTree(comments, productId) {
     })
 
     //get comments for product
-    const productComments = rootComment.filter((comment)=> {
-        if(comment.product === productId){
-            return comment
-        }
+    const productComments = rootComment.filter((comment) => {
+        return String(comment.product) === String(productId)
     })
 
     //see and return result
     console.log({
         mess: "Comments for product fetched",
-        productComments,
-        rootComment,
-        productId
+        productComments
     })
-    return  productComments
+    return productComments
 }
