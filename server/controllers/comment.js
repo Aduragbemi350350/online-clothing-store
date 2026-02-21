@@ -28,6 +28,7 @@ export const getComments = async (req, res) => {
     }
 }
 
+//get comment
 export const getProductComments = async (req, res) => {
     try {
         //get comments
@@ -84,12 +85,16 @@ export const postComment = async (req, res) => {
     try {
         //get user details from middleware
         const user = req.user
-        const {text, parent} = req.body
+        const { text } = req.body
 
         // check if user and comment details exist
-        if (!text || !parent || !user) {
-            console.log({ noContent: "There's no user or content available" })
-            res.status(400).json({ noContent: "There's no user or content available" })
+        if (!text || !user) {
+            console.log({
+                mess: "There's no user or content available",
+                user,
+                body: req.body
+            })
+            return res.status(400).json({ mess: "There's no user or content available" })
         }
 
         const comment = {
@@ -177,12 +182,77 @@ export const reactToComment = async (req, res) => {
     }
 }
 
-//delte comment
+//delete comments
 export const deleteComments = async (req, res) => {
     //delete all the comments
     try {
+        //get user
+        const user = req.user
+
+        //check user
+        if (!user) {
+            //show result
+            console.log({
+                mess: "User isn't signed in or comment isn't valid"
+            })
+            res.status(401).json({ mess: "Please, sign in and continue" })
+        }
         await Comment.deleteMany()
         res.status(200).json({ mess: "All comments has been deleted!" })
+    } catch (error) {
+        const err = errorHandler(error)
+        console.log({
+            mess: "Delete comments error",
+            errMess: err
+        })
+        res.status(err.status).json(err)
+    }
+}
+
+//delete comment
+export const deleteComment = async (req, res) => {
+    try {
+        //get comment ID
+        const commentId = req.params.id
+
+        //get user
+        const user = req.user
+
+        //check user
+        if (!user || !commentId) {
+            //show result
+            console.log({
+                mess: "User isn't signed in or comment isn't valid"
+            })
+            res.status(401).json({ mess: "Please, sign in and continue" })
+        }
+
+
+        //check if the comment is a parent
+        const deleteChildren = async (commentId) => {
+            //delete comment
+            const comment = await Comment.findByIdAndDelete(commentId)
+
+            //find children of comment
+            const commentChildren = await Comment.find({ parent: commentId })
+
+            //continue operation if children exist
+            if (commentChildren.length > 0) {
+                commentChildren.map((comment) => {
+                    //recursive operation
+                    deleteChildren(comment._id)
+                })
+            }
+            return comment
+        }
+        //Initiate the deleteChildren function
+        const deletetionResult = deleteChildren(commentId)
+
+        console.log({
+            mess: "Comment is deleted",
+            deletetionResult
+        })
+        res.status(200).json({ mess: "Comment is deleted!" })
     } catch (error) {
         const err = errorHandler(error)
         console.log({
