@@ -4,7 +4,7 @@ import axios from "axios";
 import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
-
+import { toast } from "react-toastify";
 
 const CommentArticle = ({
   comment,
@@ -17,23 +17,27 @@ const CommentArticle = ({
   //state
   // comment input
   const [commentReply, setCommentReply] = useState(false);
+  const [commentMenuToggler, setCommentMenuToggler] = useState(false);
 
   //Input field toggler
-  const toggleReplyInput = () =>
-    setCommentReply((prev) => !prev);
+  const toggleReplyInput = () => setCommentReply((prev) => !prev);
 
   //send reaction to the DB
   async function sendReaction(userReaction: any) {
     try {
       console.log("Reacting to comment...");
-      await axios.post("http://localhost:3000/api/comments/reaction/", userReaction, {
-        withCredentials: true,
-      });
+      await axios.post(
+        "http://localhost:3000/api/comments/reaction/",
+        userReaction,
+        {
+          withCredentials: true,
+        },
+      );
       console.log("Reacted to comment successfully to:", userReaction.comment);
 
-      setTimeout(()=>{
+      setTimeout(() => {
         dispatch(fetchCommentsThunk(productId));
-      }, 1000)
+      }, 1000);
     } catch (error: any) {
       console.log({ message: error.message });
     }
@@ -48,9 +52,15 @@ const CommentArticle = ({
       });
       console.log("Comment successfully made!");
 
+      toast.success("Comment successfully made!")
       dispatch(fetchCommentsThunk(productId));
     } catch (error: any) {
-      console.log({ message: error.message });
+      const errMess = error.response.data.mess || error.message
+      toast.error(errMess)
+      console.log({ 
+        mess: "An error occured while replying to a comment",
+        error
+       });
     }
   }
 
@@ -95,6 +105,43 @@ const CommentArticle = ({
     }
   };
 
+  //edit comment handler
+  const editCommentHandler = () => {};
+
+  //edit comment handler
+  const removeCommentHandler = async () => {
+    //comment ID
+    const commentId = comment?._id;
+
+    try {
+      const deleteComment = await axios.delete(
+        `http://localhost:3000/api/comments/${commentId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      //show result
+      toast.success(deleteComment.data.mess);
+      console.log({
+        mess: "Comment ID",
+        deleteComment,
+      });
+
+      //fetch comments
+      dispatch(fetchCommentsThunk(productId))
+    } catch (error: any) {
+      const errMess = error.response.data.mess || error.message;
+
+      //show result
+      toast.error(errMess);
+      console.log({
+        mess: "An error occured while deleting comment",
+        errMess,
+      });
+    }
+  };
+
   return (
     <>
       <div className="mx-auto max-w-2xl px-4">
@@ -120,6 +167,9 @@ const CommentArticle = ({
               data-dropdown-toggle="dropdownComment1"
               className="inline-flex items-center rounded-lg bg-white p-2 text-center text-sm font-medium text-gray-500 hover:bg-gray-100 focus:ring-4 focus:ring-gray-50 focus:outline-none dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               type="button"
+              onClick={() => {
+                setCommentMenuToggler((state) => !state);
+              }}
             >
               <svg
                 className="h-4 w-4"
@@ -135,35 +185,33 @@ const CommentArticle = ({
 
             <div
               id="dropdownComment1"
-              className="z-10 hidden w-36 divide-y divide-gray-100 rounded bg-white shadow dark:divide-gray-600 dark:bg-gray-700"
+              className={
+                commentMenuToggler
+                  ? "z-20 w-36 divide-y divide-gray-100 rounded bg-white shadow dark:divide-gray-600 dark:bg-gray-700"
+                  : "hidden w-36 divide-y divide-gray-100 rounded bg-white shadow dark:divide-gray-600 dark:bg-gray-700"
+              }
             >
               <ul
                 className="py-1 text-sm text-gray-700 dark:text-gray-200"
                 aria-labelledby="dropdownMenuIconHorizontalButton"
               >
                 <li>
-                  <a
-                    href="#"
+                  <button
+                    type="button"
+                    onClick={editCommentHandler}
                     className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
                     Edit
-                  </a>
+                  </button>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <button
+                    type="button"
+                    onClick={removeCommentHandler}
                     className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
                     Remove
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    Report
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
