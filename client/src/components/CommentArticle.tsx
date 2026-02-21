@@ -5,6 +5,7 @@ import { fetchCommentsThunk } from "../../redux/store/thunks/comment";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 
+
 const CommentArticle = ({
   comment,
   productId,
@@ -22,24 +23,27 @@ const CommentArticle = ({
     setCommentReply((prev) => !prev);
 
   //send reaction to the DB
-  function sendReaction(userReaction: any) {
+  async function sendReaction(userReaction: any) {
     try {
       console.log("Reacting to comment...");
-      axios.post("http://localhost:3000/api/comments/reaction/", userReaction, {
+      await axios.post("http://localhost:3000/api/comments/reaction/", userReaction, {
         withCredentials: true,
       });
       console.log("Reacted to comment successfully to:", userReaction.comment);
 
-      dispatch(fetchCommentsThunk(productId));
+      setTimeout(()=>{
+        dispatch(fetchCommentsThunk(productId));
+      }, 1000)
     } catch (error: any) {
       console.log({ message: error.message });
     }
   }
+
   //send comment to the DB
-  function sendReply(userComment: any) {
+  async function sendReply(userComment: any) {
     try {
       console.log("Replying comments...");
-      axios.post("http://localhost:3000/api/comments/", userComment, {
+      await axios.post("http://localhost:3000/api/comments/", userComment, {
         withCredentials: true,
       });
       console.log("Comment successfully made!");
@@ -70,8 +74,6 @@ const CommentArticle = ({
     reply.value = "";
     //change of the comment input field
     setCommentReply((prev) => !prev);
-
-    dispatch(fetchCommentsThunk(productId));
   };
 
   //reaction hander
@@ -168,7 +170,7 @@ const CommentArticle = ({
           </footer>
           <p className="text-gray-500 dark:text-gray-400">{comment.text}</p>
 
-          {/* comment reaction */}
+          {/* reaction and comment */}
           <div className="flex h-12 items-center gap-6">
             <div className="flex gap-2">
               <button type="button" onClick={reactionHandler} name="like">
@@ -259,14 +261,14 @@ const CommentArticle = ({
         </article>
 
         <article className="ms-10">
-          {/* {comment.children?.length > 0 &&
+          {comment.children?.length > 0 &&
             comment.children.map((child) => (
               <CommentArticle
                 key={child._id}
                 comment={child}
-                product={product}
+                productId={productId}
               />
-            ))} */}
+            ))}
         </article>
       </div>
     </>
