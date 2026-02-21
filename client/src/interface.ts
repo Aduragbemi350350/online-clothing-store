@@ -6,6 +6,7 @@ export interface Comment {
   like: string[];
   dislike: string[];
   parent: string;
+  children: Comment[]
   createdAt: string;
   updatedAt: string;
 }
