@@ -190,7 +190,7 @@ export const deleteComments = async (req, res) => {
         const user = req.user
 
         //check user
-        if (!user && (user?.role.toLowerCase() === "admin")) {
+        if (!user || !(String(user?.role) === "admin")) {
             //show result
             console.log({
                 mess: "User isn't signed in or comment isn't valid"
@@ -242,7 +242,7 @@ export const deleteComment = async (req, res) => {
         }
 
         //check the comment creator: comment.user
-        if (!(String(comment.user) === String(user._id))) {
+        if (!(String(comment.user) === String(user._id)) && !(String(user?.role) === "admin")) {
             //show result
             console.log({
                 mess: "comment can only be delete by its owner!",
@@ -321,7 +321,7 @@ export const updateComment = async (req, res) => {
         }
 
         //check the comment creator: comment.user
-        if (!(String(comment.user) === String(user._id))) {
+        if (!(String(comment.user) === String(user._id)) && !(String(user?.role) === "admin")) {
             //show result
             console.log({
                 mess: "comment can only be updated by its owner!",
