@@ -190,7 +190,7 @@ export const deleteComments = async (req, res) => {
         const user = req.user
 
         //check user
-        if (!user) {
+        if (!user && (user?.role.toLowerCase() === "admin")) {
             //show result
             console.log({
                 mess: "User isn't signed in or comment isn't valid"
@@ -227,6 +227,30 @@ export const deleteComment = async (req, res) => {
             res.status(401).json({ mess: "Please, sign in and continue" })
         }
 
+        //get comment
+        const comment = await Comment.findById(commentId)
+
+        //check comment
+        if (!comment) {
+            //show result
+            console.log({
+                mess: "comment wasn't found!",
+            })
+            return res.status(404).json({
+                mess: "comment wasn't found!",
+            })
+        }
+
+        //check the comment creator: comment.user
+        if (!(String(comment.user) === String(user._id))) {
+            //show result
+            console.log({
+                mess: "comment can only be delete by its owner!",
+            })
+            return res.status(404).json({
+                mess: "comment can only be delete by its owner!",
+            })
+        }
 
         //check if the comment is a parent
         const deleteChildren = async (commentId) => {
@@ -260,6 +284,84 @@ export const deleteComment = async (req, res) => {
             errMess: err
         })
         res.status(err.status).json(err)
+    }
+}
+
+//update comment
+export const updateComment = async (req, res) => {
+    try {
+        //get details
+        const commentId = req.params.id
+        const { text } = req.body
+        const user = req.user
+
+        //check user
+        if (!user) {
+            //show result
+            console.log({
+                mess: "Please, login to continue!",
+            })
+            return res.status(401).json({
+                mess: "Please, login to continue!",
+            })
+        }
+
+        //get comment
+        const comment = await Comment.findById(commentId)
+
+        //check comment
+        if (!comment) {
+            //show result
+            console.log({
+                mess: "comment wasn't found!",
+            })
+            return res.status(404).json({
+                mess: "comment wasn't found!",
+            })
+        }
+
+        //check the comment creator: comment.user
+        if (!(String(comment.user) === String(user._id))) {
+            //show result
+            console.log({
+                mess: "comment can only be updated by its owner!",
+            })
+            return res.status(404).json({
+                mess: "comment can only be updated by its owner!",
+            })
+        }
+
+        //update comment
+        comment.text = text
+        const updateComment = await comment.save()
+
+        //check if update was successful
+        if (!updateComment) {
+            //show result
+            console.log({
+                mess: "comment wasn't updated successfully!",
+            })
+            return res.status(404).json({
+                mess: "comment wasn't updated successfully. Please, try again later!",
+            })
+        }
+
+        //show result
+        console.log({
+            mess: "comment update successfully!",
+            updateComment
+        })
+        return res.status(200).json({
+            mess: "comment update successfully!",
+        })
+    } catch (error) {
+        const errMess = errorHandler(error)
+        //show result
+        console.log({
+            mess: "An unexpected error occured while updating the comment!",
+            errMess
+        })
+        return res.status(errMess.status).json(errMess.message)
     }
 }
 
