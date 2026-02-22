@@ -171,28 +171,47 @@ export const updateProduct = async (req, res) => {
         const productId = req.params.id
         const productUpdate = req.body
         const files = req.files
+        const user = req.user
 
+        //show update details
         console.log({
             mess: "Update products",
             body: productUpdate,
-            files
+            files,
+            user
         })
 
         // confirm if there's update from the user
-        if (!productUpdate && !files) {
+        if ((!productUpdate && !files) || !user) {
             console.log({
-                mess: "User didn't update product"
+                mess: "Make sure all inputs are provided and you're loggedin!"
             })
-            res.status(400).json({ mess: "User didn't update product" })
+            res.status(400).json({ mess: "Make sure all inputs are provided and you're loggedin!" })
         }
 
-        // confirm if product exist
-        const product = await Product.findById(productId)
+        //get product
+        const product = await product.findById(productId)
+
+        //check product
         if (!product) {
+            //show result
             console.log({
-                mess: "The product user wants to update doesn't exist in the DB"
+                mess: "product wasn't found!",
             })
-            res.status(400).json({ mess: "The product user wants to update doesn't exist in the DB" })
+            return res.status(404).json({
+                mess: "product wasn't found!",
+            })
+        }
+
+        //check the product creator: product.user
+        if (!(String(product.user) === String(user._id)) && !(String(user?.role) === "admin")) {
+            //show result
+            console.log({
+                mess: "product can only be delete by its owner!",
+            })
+            return res.status(404).json({
+                mess: "product can only be delete by its owner!",
+            })
         }
 
         // confirm if image was updated
@@ -208,7 +227,6 @@ export const updateProduct = async (req, res) => {
                     deletedImages
                 })
             }
-
 
             //create new image in cloudinary: Update
             updatedImages = await cloudinaryUploadImages(files)
@@ -298,8 +316,11 @@ export const updateProduct = async (req, res) => {
 //delete product
 export const deleteProduct = async (req, res) => {
     try {
-        //verify user
+
         const user = req.user
+        const productId = req.params.id
+
+        //verify user
         if (!user) {
             console.log({
                 mess: "This isn't a verified user",
@@ -307,16 +328,28 @@ export const deleteProduct = async (req, res) => {
             return res.status(400).json({ mess: "This isn't a verified user" })
         }
 
-        //get product and delete
-        const product = await Product.findById(req.params.id)
+        //get product
+        const product = await product.findById(productId)
 
-        //check if there's product
+        //check product
         if (!product) {
+            //show result
             console.log({
-                mess: "Product isn't in the DB"
+                mess: "product wasn't found!",
             })
-            res.status(400).json({
-                mess: "Product isn't in the DB"
+            return res.status(404).json({
+                mess: "product wasn't found!",
+            })
+        }
+
+        //check the product creator: product.user
+        if (!(String(product.user) === String(user._id)) && !(String(user?.role) === "admin")) {
+            //show result
+            console.log({
+                mess: "product can only be delete by its owner!",
+            })
+            return res.status(404).json({
+                mess: "product can only be delete by its owner!",
             })
         }
 
@@ -364,11 +397,11 @@ export const deleteProducts = async (req, res) => {
     try {
         //verify user
         const user = req.user
-        if (!user) {
+        if (!user || !(String(user?.role) === "admin")) {
             console.log({
-                mess: "This isn't a verified user",
+                mess: "Products can only be deleted by admin",
             })
-            return res.status(400).json({ mess: "This isn't a verified user" })
+            return res.status(400).json({ mess: "Products can only be deleted by admin" })
         }
 
         //delete product from DB
