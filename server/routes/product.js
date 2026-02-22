@@ -10,13 +10,13 @@ import { authMiddleWare, getUser } from '../auth/authMiddleware.js'
 
 
 router
-    .get('/',getUser, getProducts)
+    .get('/', getUser, getProducts)
 
     .post('/', authMiddleWare, multerUpload.array("images"), createProduct)
 
     .get('/:slug', getProduct)
 
-    .put('/:id', multerUpload.array("images"),updateProduct)
+    .put('/:id', authMiddleWare, multerUpload.array("images"),updateProduct)
 
     .delete('/:id', authMiddleWare, deleteProduct)
 
