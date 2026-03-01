@@ -9,15 +9,66 @@ import slugify from 'slugify'
 //fetch all products
 export const getProducts = async (req, res) => {
     try {
-        //get all products
-        const products = await Product.find()
-        let user = null
-        if (req.user) {
-            user = req.user
+        //get query params 
+        const queryBody = req.query
+
+        //create a query object
+        const params = {
+            query: queryBody.query || null,
+            category: queryBody.category || null,
+            minPrice: Number(queryBody.minPrice) || null,
+            maxPrice: Number(queryBody.maxPrice) || null
         }
 
-        console.log({ availableProducts: products, currentUser: user })
-        res.json(products)
+        const { query, category, minPrice, maxPrice } = params
+
+
+        //get all products
+        const products = await Product.find()
+        // console.log({ mess: "products", products })
+
+        if(!products){
+            //show result
+            console.log({
+                mess: "Products wasn't found"
+            })
+            return res.status(400).json({
+                mess: "Products not found"
+            })
+        }
+
+        let filteredProducts = []
+        if (req.query) {
+            //build smart search
+
+            //filtered products
+            filteredProducts = (products.filter((product) => {
+                const { name, description } = product
+
+                //check the product name and description for the query
+                const isQuery = query === null ? true : (Object.values({ name, description }).some((item) => item.toLowerCase().includes(query.toLowerCase())))
+                console.log({ mess: "isQuery", isQuery })
+
+                //check the category
+                const isCategory = category === null ? true : (product.category === category)
+                console.log({ mess: "isCategory", isCategory })
+
+                //check the price
+                const isPrice = ((minPrice === null) || (minPrice <= product.price)) && ((maxPrice === null) || (maxPrice >= product.price))
+                console.log({ mess: "isPrice", isPrice })
+
+                return isQuery && isCategory && isPrice
+            }))
+
+
+            console.log({
+                mess: "Filtered products",
+                filteredProducts
+            })
+        }
+
+
+        res.status(200).json(filteredProducts)
     } catch (error) {
         const err = errorHandler(error)
         console.log({
