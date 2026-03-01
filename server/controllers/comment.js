@@ -32,7 +32,7 @@ export const getComments = async (req, res) => {
 export const getProductComments = async (req, res) => {
     try {
         //get comments
-        const comments = await Comment.find()
+        const comments = await Comment.find().populate("user", "-password -__v");
         const productId = req.params.productId
         console.log({
             mess: "Product ID",
@@ -281,7 +281,7 @@ export const deleteComment = async (req, res) => {
         const err = errorHandler(error)
         console.log({
             mess: "Delete comments error",
-            errMess: err
+            errMess: error
         })
         res.status(err.status).json(err)
     }
