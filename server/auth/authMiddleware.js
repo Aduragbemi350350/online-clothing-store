@@ -7,7 +7,7 @@ import errorHandler from '../utilities/errorHandler.js'
 export async function authMiddleWare(req, res, next) {
     try {
         //get token from client header
-        const token = req.cookies.userToken
+        const token = req.cookies?.userToken
 
         //show token
         console.log({ mess: "Get token from client header", token })
@@ -33,9 +33,8 @@ export async function authMiddleWare(req, res, next) {
             next()
         }
     } catch (error) {
-        console.log({ mess: "An error occured while verifying user!" })
-        const err = errorHandler(error)
-        res.status(500).json({ mess: err })
+        console.log({ mess: "An error occured while verifying user!", error })
+        res.status(401).json({ mess: "User isn't logged in. Please, try again!" })
     }
 }
 
