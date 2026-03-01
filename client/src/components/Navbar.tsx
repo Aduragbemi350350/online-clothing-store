@@ -5,15 +5,11 @@ import { AppDispatch, RootState } from "../../redux/store/store";
 import axios from "axios";
 import { logoutuser } from "../../redux/store/slices/user";
 import fetchUserThunk from "../../redux/store/thunks/user";
+import {toast, ToastContainer} from 'react-toastify'
 
 const Navbar = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
-
-  // console.log({
-  //   name: "User logged In",
-  //   currentUser: user,
-  // });
 
   //handle signout
   const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -30,7 +26,10 @@ const Navbar = () => {
       console.log({ "User logout": respose });
 
       dispatch(logoutuser());
+
+      toast.success("User successfully logged out!")
     } catch (error: any) {
+      toast.error("User didn't successfully logged out!")
       console.log({ "User logout error": error.message });
     }
   };
@@ -44,6 +43,7 @@ const Navbar = () => {
   }, [dispatch]);
   return (
     <>
+    <ToastContainer />
       <nav className="fixed start-0 top-0 z-20 w-full border-b border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-900">
         <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
           <Link
