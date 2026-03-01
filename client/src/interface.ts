@@ -1,6 +1,6 @@
 export interface Comment {
   _id: string;
-  user: string;
+  user: User;
   product: string;
   text: string;
   like: string[];
@@ -12,7 +12,7 @@ export interface Comment {
 }
 
 export interface Image {
-  publicKey: string;
+  publicId: string;
   secureURL: string;
   resourceType: string;
   folder: string;
@@ -33,6 +33,6 @@ export interface Product {
 
 export interface User {
   username: string;
-  password: string;
   email: string;
+  _id: string
 }
