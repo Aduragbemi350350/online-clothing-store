@@ -4,24 +4,30 @@ import axios from "axios";
 
 export const fetchProductsThunk = createAsyncThunk<
   Product[],
-  void,
+  string | null,
   { rejectValue: string }
->("products/fetchProducts", async (_, thunkAPI) => {
+>("products/fetchProducts", async (queryParamsUrl, thunkAPI) => {
   try {
-    const response = await axios.get("http://localhost:3000/api/products", {
-      withCredentials: true,
-    });
+    let response;
+    if (queryParamsUrl) {
+      response = await axios.get(queryParamsUrl, {
+        withCredentials: true,
+      });
+    } else {
+      response = await axios.get("http://localhost:3000/api/products", {
+        withCredentials: true,
+      });
+    }
 
     return response.data as Product[];
   } catch (error: any) {
     console.log({
       message: "Product fetch failed",
-      products: error
-    })
-    const message = (error?.response.data) || error.message 
+      products: error,
+    });
+    const message = error?.response.data || error.message;
     return thunkAPI.rejectWithValue(message);
   }
 });
 
 export default fetchProductsThunk;
-
