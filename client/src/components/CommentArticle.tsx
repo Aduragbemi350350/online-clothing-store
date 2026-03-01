@@ -154,7 +154,7 @@ const CommentArticle = ({
                   src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
                   alt="Michael Gough"
                 />
-                {comment._id}
+                {}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <time dateTime="2022-02-08" title="February 8th, 2022">
