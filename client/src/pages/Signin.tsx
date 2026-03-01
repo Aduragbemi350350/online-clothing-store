@@ -5,10 +5,10 @@ import Layout from "../Layout";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store/store";
 import fetchUserThunk from "../../redux/store/thunks/user";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Signin() {
   const dispatch = useDispatch<AppDispatch>();
-  // const [user, setuser] = useState<any>();
 
   async function signin(user: any) {
     try {
@@ -22,9 +22,10 @@ export default function Signin() {
 
       //update user state
       dispatch(fetchUserThunk());
-      console.log("Fetching user...")
-      
+      console.log("Fetching user...");
+      toast.success("User successfully logged in!");
     } catch (error: any) {
+      toast.error("User didn't successfully logged in!");
       console.log({ "fetch user error": error.message });
     }
   }
@@ -50,6 +51,7 @@ export default function Signin() {
   };
   return (
     <Layout>
+      <ToastContainer />
       <section className="mt-10 bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
           <h3 className="mb-6 flex items-center text-2xl font-semibold text-gray-900 dark:text-white">
