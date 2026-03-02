@@ -25,21 +25,33 @@ const CommentArticle = ({
   //send reaction to the DB
   async function sendReaction(userReaction: any) {
     try {
-      console.log("Reacting to comment...");
-      await axios.post(
+      const reaction : any = await axios.post(
         "http://localhost:3000/api/comments/reaction/",
         userReaction,
         {
           withCredentials: true,
         },
       );
-      console.log("Reacted to comment successfully to:", userReaction.comment);
 
+      if(!reaction.data){
+        toast.error(reaction?.message!)
+      }
+
+      const succMess = reaction.data.mess || "Reaction made successfully"
+
+      toast.success(succMess)
+      
+      //This ensures that the product would have been updated before we fetch
       setTimeout(() => {
         dispatch(fetchCommentsThunk(productId));
       }, 1000);
     } catch (error: any) {
-      console.log({ message: error.message });
+      const errMess = error.response.data.mess || error.message
+      toast.error(errMess)
+      console.log({
+        mess: "An error occured while reacting to the product",
+        errMess
+      });
     }
   }
 
@@ -52,15 +64,15 @@ const CommentArticle = ({
       });
       console.log("Comment successfully made!");
 
-      toast.success("Comment successfully made!")
+      toast.success("Comment successfully made!");
       dispatch(fetchCommentsThunk(productId));
     } catch (error: any) {
-      const errMess = error.response.data.mess || error.message
-      toast.error(errMess)
-      console.log({ 
+      const errMess = error.response.data.mess || error.message;
+      toast.error(errMess);
+      console.log({
         mess: "An error occured while replying to a comment",
-        error
-       });
+        error,
+      });
     }
   }
 
@@ -129,7 +141,7 @@ const CommentArticle = ({
       });
 
       //fetch comments
-      dispatch(fetchCommentsThunk(productId))
+      dispatch(fetchCommentsThunk(productId));
     } catch (error: any) {
       const errMess = error.response.data.mess || error.message;
 
