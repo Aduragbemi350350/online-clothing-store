@@ -17,12 +17,29 @@ const Product = () => {
   const { slug } = useParams<string>();
   const { user } = useSelector((state: RootState) => state.user);
 
-  //Product state
+  // state starts //
+
+  //product state
   const { product, loading, error } = useSelector(
     (state: RootState) => state.product,
   );
 
-  const [showcaseImage, setShowcaseImage] = useState<string>()
+  //image showcase
+  const [showcaseImage, setShowcaseImage] = useState<string>();
+
+  //rating
+  const [rating, setRating] = useState<number>(0);
+
+  //like product
+  const [likeProduct, setLikeProduct] = useState<boolean>(false);
+
+  console.log({
+    mess: "Ratings",
+    rating,
+    likeProduct,
+  });
+
+  // state ends //
 
   //handle product delete
   const handleDeleteProduct = (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,11 +71,11 @@ const Product = () => {
     dispatch(fetchProductThunk(slug!));
   }, []);
 
-  useEffect(()=>{
-    if(product?.images[0].secureURL){
-      setShowcaseImage(product?.images[0].secureURL)
+  useEffect(() => {
+    if (product?.images[0].secureURL) {
+      setShowcaseImage(product?.images[0].secureURL);
     }
-  }, [product?._id])
+  }, [product?._id]);
 
   //RETURNS
   //RETURNS
@@ -112,144 +129,133 @@ const Product = () => {
   }
 
   //Product
-    return (
-      <Layout>
-        <ToastContainer />
-        <section className="body-font overflow-hidden text-gray-600">
-          <div className="container mx-auto px-5 pt-24">
-            <div className="mx-auto justify-center lg:flex lg:w-4/5">
-              {/* product images grid */}
-              <div className="flex flex-col">
-                <div className="flex justify-center lg:h-120 xl:w-120">
-                  <img
-                    alt="ecommerce"
-                    className="w-full rounded-lg object-cover object-center"
-                    src={showcaseImage}
-                  />
-                </div>
-                <div className="mt-2 flex flex-row justify-center gap-2">
-                  {product?.images.map((image) => (
-                    <div
-                      className="button h-14 w-14"
-                      onClick={() => setShowcaseImage(image.secureURL)}
-                      key={image.publicId}
-                    >
-                      <img
-                        alt="ecommerce"
-                        className="h-full w-full rounded object-cover object-center"
-                        src={image.secureURL}
-                      />
-                    </div>
-                  ))}
-                </div>
+  return (
+    <Layout>
+      <ToastContainer />
+      <section className="body-font overflow-hidden text-gray-600">
+        <div className="container mx-auto px-5 pt-24">
+          <div className="mx-auto justify-center lg:flex lg:w-4/5">
+            {/* product images grid */}
+            <div className="flex flex-col">
+              <div className="flex justify-center lg:h-120 xl:w-120">
+                <img
+                  alt="ecommerce"
+                  className="w-full rounded-lg object-cover object-center"
+                  src={showcaseImage}
+                />
               </div>
-              <div className="mt-6 w-full lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10">
+              <div className="mt-2 flex flex-row justify-center gap-2">
+                {product?.images.map((image) => (
+                  <div
+                    className="button h-14 w-14"
+                    onClick={() => setShowcaseImage(image.secureURL)}
+                    key={image.publicId}
+                  >
+                    <img
+                      alt="ecommerce"
+                      className="h-full w-full rounded object-cover object-center"
+                      src={image.secureURL}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-6 w-full lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10">
+              {/* product details */}
+              <div>
                 <h2 className="title-font text-sm tracking-widest text-gray-500">
-                  BRAND NAME
+                  PRODUCT NAME
                 </h2>
                 <h1 className="title-font mb-1 text-3xl font-medium text-gray-900">
                   {product?.name}
                 </h1>
-                <div className="mb-4 flex">
-                  <span className="flex items-center">
-                    <svg
-                      fill="currentColor"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-indigo-500"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
-                    <svg
-                      fill="currentColor"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-indigo-500"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
-                    <svg
-                      fill="currentColor"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-indigo-500"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
-                    <svg
-                      fill="currentColor"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-indigo-500"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-indigo-500"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
-                    <span className="ml-3 text-gray-600">4 Reviews</span>
-                  </span>
-                  <span className="space-x-2s ml-3 flex border-l-2 border-gray-200 py-2 pl-3">
-                    <a className="text-gray-500">
-                      <svg
-                        fill="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        className="h-5 w-5"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
-                      </svg>
-                    </a>
-                    <a className="text-gray-500">
-                      <svg
-                        fill="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        className="h-5 w-5"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
-                      </svg>
-                    </a>
-                    <a className="text-gray-500">
-                      <svg
-                        fill="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        className="h-5 w-5"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
-                      </svg>
-                    </a>
-                  </span>
-                </div>
-                <p className="leading-relaxed">{product?.description}</p>
-                <div className="mt-6 mb-5 flex items-center border-b-2 border-gray-100 pb-5">
+
+                {/* star rating */}
+                <span className="flex items-center">
+                  <svg
+                    fill="currentColor"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className={
+                      `h-4 w-4 ` +
+                      `${rating >= 1 ? "text-indigo-500" : "text-gray-300"}`
+                    }
+                    viewBox="0 0 24 24"
+                    onClick={() => setRating(1)}
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <svg
+                    fill="currentColor"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className={
+                      `h-4 w-4 ` +
+                      `${rating >= 2 ? "text-indigo-500" : "text-gray-300"}`
+                    }
+                    viewBox="0 0 24 24"
+                    onClick={() => setRating(2)}
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <svg
+                    fill="currentColor"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className={
+                      `h-4 w-4 ` +
+                      `${rating >= 3 ? "text-indigo-500" : "text-gray-300"}`
+                    }
+                    viewBox="0 0 24 24"
+                    onClick={() => setRating(3)}
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <svg
+                    fill="currentColor"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className={
+                      `h-4 w-4 ` +
+                      `${rating >= 4 ? "text-indigo-500" : "text-gray-300"}`
+                    }
+                    viewBox="0 0 24 24"
+                    onClick={() => setRating(4)}
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <svg
+                    fill="currentColor"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className={
+                      `h-4 w-4 ` +
+                      `${rating === 5 ? "text-indigo-500" : "text-gray-300"}`
+                    }
+                    viewBox="0 0 24 24"
+                    onClick={() => setRating(5)}
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <span className="ml-3 text-gray-600">4 Reviews</span>
+                </span>
+
+                <p className="mt-4 leading-relaxed">{product?.description}</p>
+
+                <p className="mt-4 text-gray-900">Price: ${product?.price}</p>
+
+                {/* color and size */}
+                <div className="mt-6 mb-5 flex items-center border-b-1 border-gray-100 pb-5">
                   <div className="flex">
                     <span className="mr-3">Color</span>
                     <button className="h-6 w-6 rounded-full border-2 border-gray-300 focus:outline-none"></button>
@@ -281,11 +287,101 @@ const Product = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex">
-                  <span className="title-font text-2xl font-medium text-gray-900">
-                    {product?.price}
+              </div>
+
+              {/* rate and like product */}
+              <div className="flex gap-8">
+                {/* rate product */}
+                <div className="flex items-center justify-center gap-2">
+                  <span className="ml-3 text-gray-600">Rate Product:</span>
+                  <span className="flex items-center">
+                    <svg
+                      fill="currentColor"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      className={
+                        `h-4 w-4 ` +
+                        `${rating >= 1 ? "text-indigo-500" : "text-gray-300"}`
+                      }
+                      viewBox="0 0 24 24"
+                      onClick={() => setRating(1)}
+                    >
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    <svg
+                      fill="currentColor"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      className={
+                        `h-4 w-4 ` +
+                        `${rating >= 2 ? "text-indigo-500" : "text-gray-300"}`
+                      }
+                      viewBox="0 0 24 24"
+                      onClick={() => setRating(2)}
+                    >
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    <svg
+                      fill="currentColor"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      className={
+                        `h-4 w-4 ` +
+                        `${rating >= 3 ? "text-indigo-500" : "text-gray-300"}`
+                      }
+                      viewBox="0 0 24 24"
+                      onClick={() => setRating(3)}
+                    >
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    <svg
+                      fill="currentColor"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      className={
+                        `h-4 w-4 ` +
+                        `${rating >= 4 ? "text-indigo-500" : "text-gray-300"}`
+                      }
+                      viewBox="0 0 24 24"
+                      onClick={() => setRating(4)}
+                    >
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    <svg
+                      fill="currentColor"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      className={
+                        `h-4 w-4 ` +
+                        `${rating === 5 ? "text-indigo-500" : "text-gray-300"}`
+                      }
+                      viewBox="0 0 24 24"
+                      onClick={() => setRating(5)}
+                    >
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
                   </span>
-                  <button className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-gray-200 p-0 text-gray-500">
+                </div>
+                {/* divider */}
+                <span className="border-r-1 border-gray-200"></span>
+                {/* like product */}
+                <div className="flex items-center justify-center gap-4">
+                  {/* likes count */}
+                  <span>223</span>
+                  <button
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border-0 bg-gray-200 p-0 text-gray-500"
+                    onClick={() => setLikeProduct((state) => !state)}
+                  >
                     <svg
                       fill="currentColor"
                       strokeLinecap="round"
@@ -298,35 +394,36 @@ const Product = () => {
                     </svg>
                   </button>
                 </div>
-
-                {/* update  and delete */}
-                {user._id === product?.createdBy && (
-                  <div className="mt-6 flex gap-3">
-                    <Link to="/product/update">
-                      <button className="mt-4 rounded-md bg-blue-600 p-2 text-white">
-                        Update
-                      </button>
-                    </Link>
-
-                    <form onSubmit={handleDeleteProduct}>
-                      <button
-                        type="submit"
-                        className="mt-4 rounded-md bg-red-600 p-2 text-white"
-                      >
-                        Delete
-                      </button>
-                    </form>
-                  </div>
-                )}
               </div>
+
+              {/* update  and delete */}
+              {user._id === product?.createdBy && (
+                <div className="mt-6 flex gap-3">
+                  <Link to="/product/update">
+                    <button className="mt-4 rounded-md bg-blue-600 p-2 text-white">
+                      Update
+                    </button>
+                  </Link>
+
+                  <form onSubmit={handleDeleteProduct}>
+                    <button
+                      type="submit"
+                      className="mt-4 rounded-md bg-red-600 p-2 text-white"
+                    >
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* See comments*/}
-          <Comments product={product!} />
-        </section>
-      </Layout>
-    );
+        {/* See comments*/}
+        <Comments product={product!} />
+      </section>
+    </Layout>
+  );
 };
 
 export default Product;
