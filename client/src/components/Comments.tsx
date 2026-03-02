@@ -97,9 +97,9 @@ const Comments = ({ product }: { product: Product }) => {
 
   //comments
   return (
-    <section>
+    <section className="pb-22">
       {/* Give comment */}
-      <div className="bg-white py-8 antialiased lg:py-16 dark:bg-gray-900">
+      <div className="bg-white antialiased lg:py-16 dark:bg-gray-900">
         <div className="mx-auto max-w-2xl px-4">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-900 lg:text-2xl dark:text-white">
@@ -145,7 +145,7 @@ const Comments = ({ product }: { product: Product }) => {
           />
         ))
       ) : (
-        <div>
+        <div className="mx-auto text-center">
           <h2>Product doesn't have comments</h2>
         </div>
       )}
