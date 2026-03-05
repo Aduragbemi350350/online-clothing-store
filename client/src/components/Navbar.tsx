@@ -1,15 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store/store";
 import axios from "axios";
 import { logoutuser } from "../../redux/store/slices/user";
 import fetchUserThunk from "../../redux/store/thunks/user";
-import {toast, ToastContainer} from 'react-toastify'
+import { toast, ToastContainer } from "react-toastify";
 
 const Navbar = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
+
+  //for navbar sticky positioning
+  const navRef = useRef<HTMLDivElement>(null);
+  const [navHeight, setNavHeight] = useState<number>(0);
+  const [showNav, setShowNav] = useState<boolean>(false);
+  const [windowScrollY, setWindowScrollY] = useState<number>();
 
   //handle signout
   const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -27,24 +33,61 @@ const Navbar = () => {
 
       dispatch(logoutuser());
 
-      toast.success("User successfully logged out!")
+      toast.success("User successfully logged out!");
     } catch (error: any) {
-      toast.error("User didn't successfully logged out!")
+      toast.error("User didn't successfully logged out!");
       console.log({ "User logout error": error.message });
     }
   };
 
+  // useeffect start//
+
+  //handle nav position
+  useEffect(() => {
+    //handle window scroll
+    const handleWindowScroll = () => {
+      //set window scroll
+      setWindowScrollY(window.scrollY);
+
+      //check distance moved
+      if (window.scrollY > (navHeight * 0.5)) {
+        setShowNav(true);
+      } else {
+        setShowNav(false);
+      }
+    };
+
+    //create an event as window scrolls
+    window.addEventListener("scroll", handleWindowScroll);
+
+    //get navbar height
+    if (navRef.current) {
+      const navHeight = navRef.current.getBoundingClientRect().height;
+      setNavHeight(navHeight);
+    }
+
+    return () => window.removeEventListener("scroll", handleWindowScroll);
+  }, [windowScrollY]);
+
+  //fetch user
   useEffect(() => {
     //dispatch fetch user
     dispatch(fetchUserThunk());
-
-    //show result
-    // console.log("Navbar dispatched fetch user thunk!");
   }, [dispatch]);
+
+  // useeffect ends //
+
   return (
     <>
-    <ToastContainer />
-      <nav className="fixed start-0 top-0 z-20 w-full border-b border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-900">
+      <ToastContainer />
+      <nav
+        className={
+          showNav === true
+            ? `sticky top-0 z-1 w-full border-b border-gray-200 bg-white py-2 dark:border-gray-600 dark:bg-gray-900`
+            : "z-1 w-full border-b border-gray-200 bg-white py-2 dark:border-gray-600 dark:bg-gray-900"
+        }
+        ref={navRef}
+      >
         <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
           <Link
             to="/"
