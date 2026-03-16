@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store/store";
@@ -10,12 +10,6 @@ import { toast, ToastContainer } from "react-toastify";
 const Navbar = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
-
-  //for navbar sticky positioning
-  const navRef = useRef<HTMLDivElement>(null);
-  const [navHeight, setNavHeight] = useState<number>(0);
-  const [showNav, setShowNav] = useState<boolean>(false);
-  const [windowScrollY, setWindowScrollY] = useState<number>();
 
   //handle signout
   const handleSignout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -42,33 +36,6 @@ const Navbar = () => {
 
   // useeffect start//
 
-  //handle nav position
-  useEffect(() => {
-    //handle window scroll
-    const handleWindowScroll = () => {
-      //set window scroll
-      setWindowScrollY(window.scrollY);
-
-      //check distance moved
-      if (window.scrollY > (navHeight * 0.5)) {
-        setShowNav(true);
-      } else {
-        setShowNav(false);
-      }
-    };
-
-    //create an event as window scrolls
-    window.addEventListener("scroll", handleWindowScroll);
-
-    //get navbar height
-    if (navRef.current) {
-      const navHeight = navRef.current.getBoundingClientRect().height;
-      setNavHeight(navHeight);
-    }
-
-    return () => window.removeEventListener("scroll", handleWindowScroll);
-  }, [windowScrollY]);
-
   //fetch user
   useEffect(() => {
     //dispatch fetch user
@@ -80,14 +47,7 @@ const Navbar = () => {
   return (
     <>
       <ToastContainer />
-      <nav
-        className={
-          showNav === true
-            ? `sticky top-0 z-1 w-full border-b border-gray-200 bg-white py-2 dark:border-gray-600 dark:bg-gray-900`
-            : "z-1 w-full border-b border-gray-200 bg-white py-2 dark:border-gray-600 dark:bg-gray-900"
-        }
-        ref={navRef}
-      >
+      <nav className="sticky top-0 z-2 w-full border-b border-gray-200 bg-white py-2 dark:border-gray-600 dark:bg-gray-900">
         <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
           <Link
             to="/"
