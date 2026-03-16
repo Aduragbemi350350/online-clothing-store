@@ -133,7 +133,7 @@ const Product = () => {
     <Layout>
       <ToastContainer />
       <section className="body-font overflow-hidden text-gray-600">
-        <div className="container mx-auto px-5 pt-24">
+        <div className="container mx-auto px-5 pt-6">
           <div className="mx-auto justify-center lg:flex lg:w-4/5">
             {/* product images grid */}
             <div className="flex flex-col">
