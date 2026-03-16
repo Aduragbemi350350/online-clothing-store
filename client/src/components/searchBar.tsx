@@ -13,7 +13,11 @@ const SearchBar = () => {
   const [openPrice, setOpenPrice] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+  //query or search
   const [query, setQuery] = useState("");
+
+  //search icon on small screen
+  const [showSearch, setShowSearch] = useState<boolean>(false);
 
   //handle query search and filtering
   const makeQuery = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,20 +37,34 @@ const SearchBar = () => {
     dispatch(fetchProductsThunk(url));
   };
 
-  if (minPrice || maxPrice || category) {
-    console.log({
-      mess: "A category has been provided",
-      minPrice,
-      maxPrice,
-      query,
-      category,
-    });
-  }
-
   // get elements
   const categoryRef = useRef<SVGSVGElement>(null);
   const priceRef = useRef<SVGSVGElement>(null);
+  const priceParentRef = useRef<HTMLDivElement>(null);
 
+  //useEffect starts
+
+  useEffect(() => {
+    //make body unscrollable when search shows
+    if (showSearch) {
+      document.body.style.overflow = "hidden";
+    }else{
+      document.body.style.overflow = "auto";
+    }
+
+    //show search icon only on mobile screen
+    const handleWindowResize = () => {
+      if (window.innerWidth > 425) {
+        setShowSearch(false);
+      }
+    };
+
+    handleWindowResize();
+
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => window.removeEventListener("resize", handleWindowResize);
+  });
   useEffect(() => {
     const handleWindowClick = (e: Event) => {
       //close all opened tab
@@ -58,9 +76,15 @@ const SearchBar = () => {
         setOpenCategory(false);
       } else if (
         priceRef.current &&
+        priceParentRef.current &&
         priceRef.current !== e.target &&
+        !priceParentRef.current?.contains(e.target as Node) &&
         openPrice
       ) {
+        console.log({
+          element: priceParentRef.current,
+          target: e.target,
+        });
         setOpenPrice(false);
       }
     };
@@ -69,13 +93,23 @@ const SearchBar = () => {
 
     return () => window.removeEventListener("click", handleWindowClick);
   }, [openCategory, openPrice]);
+  //useEffect ends
 
   return (
-    <section>
-      <form className="flex pt-26">
-        <div className="mx-16 flex w-full flex-col justify-center gap-y-1 md:flex-row">
+    <section className="relative">
+      <div
+        className={showSearch ? "fixed z-1 h-screen w-screen bg-gray-100" : ""}
+      ></div>
+      <form className="relative z-1 flex justify-center px-4 pt-4">
+        <div
+          className={
+            showSearch
+              ? "fixed flex flex-col items-center justify-center gap-y-1"
+              : "hidden items-center justify-center md:static md:flex md:flex-row"
+          }
+        >
           {/* category */}
-          <div className="jusify-center relative flex items-center gap-x-2 border border-gray-400 px-6 py-3 md:rounded-l-lg">
+          <div className="jusify-center relative flex w-full items-center gap-x-2 border border-gray-400 px-6 py-3 md:w-auto md:rounded-l-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -129,7 +163,7 @@ const SearchBar = () => {
           </div>
 
           {/* price */}
-          <div className="jusify-center relative flex items-center gap-x-2 border border-gray-400 px-6 py-3">
+          <div className="jusify-center relative flex w-full items-center gap-x-2 border border-gray-400 px-6 py-3 md:w-auto">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -171,11 +205,12 @@ const SearchBar = () => {
             <div
               className={
                 openPrice
-                  ? "absolute z-1 mt-30 flex justify-center rounded-lg border border-gray-400 bg-white p-4"
+                  ? "absolute top-13 z-1 mt-0 flex flex-col justify-center rounded-lg border border-gray-400 bg-white"
                   : "absolute z-1 mt-30 flex hidden justify-center rounded-lg border border-gray-400 bg-white p-4"
               }
+              ref={priceParentRef}
             >
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center p-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -197,7 +232,7 @@ const SearchBar = () => {
                   onChange={(e) => setMinPrice(Number(e.currentTarget.value))}
                 />
               </div>
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center p-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -223,13 +258,13 @@ const SearchBar = () => {
           </div>
 
           <input
-            className="border border-gray-400 py-3 ps-4 pe-8 focus:outline-none"
+            className="w-full border border-gray-400 py-3 ps-4 focus:outline-none md:w-auto"
             type="search"
-            placeholder="Product name, description ..."
+            placeholder="name, description..."
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
 
-          <div className="jusify-center flex items-center gap-x-2 border border-gray-400 px-6 py-3 md:rounded-e-lg">
+          <div className="jusify-center flex w-full items-center gap-x-2 border border-gray-400 px-6 py-3 md:w-auto md:rounded-e-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -249,6 +284,27 @@ const SearchBar = () => {
               Search
             </button>
           </div>
+        </div>
+
+        {/* searchbar icon on small screen */}
+        <div className="relative flex w-full justify-end md:hidden">
+          <svg
+            className="fixed size-10 rounded-full bg-black/50 p-2 text-gray-200 sm:size-8 dark:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+            onClick={() => setShowSearch((state) => !state)}
+          >
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="2"
+              d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+            />
+          </svg>
         </div>
       </form>
     </section>
